@@ -8,6 +8,9 @@
 #include <time.h>
 #include<iostream>
 #include <bits/stdc++.h>
+#include <chrono>
+#include <thread>
+#include <unistd.h>
 #include "BmpLoader.h"
 
 using namespace std;
@@ -32,10 +35,10 @@ GLuint ID[]={1,2,3,4};
 
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
-GLfloat x_diff[] = {0.5,0.6,0.63,0.7,0.7,0.7,0.8,0.82};
+GLfloat x_diff[] = {0.5,0.5,0.63,0.7,0.7,0.7,0.8,0.82};
 GLfloat y_diff[] = {0.23,0.25,0.3,0.3,0.35,0.4,0.4,0.45};
 
-GLfloat x_start_points[] = {-2,37,-2.48,-2.59,-2.72,-2.85,-3,-3.21,-3.42,-3.61};
+GLfloat x_start_points[] = {-2.37,-2.48,-2.59,-2.72,-2.85,-3,-3.21,-3.42,-3.61};
 GLfloat y_start_points[] = {4,3.77,3.51,3.21,2.91,2.57,2.17,1.78,1.30};
 
 
@@ -298,6 +301,9 @@ public:
         if(selected)
         {
             this->texture = 4;
+            //this->draw();
+            cout<<endl<<this->texture<<endl;
+
         }
         else{
             if (white)
@@ -1269,6 +1275,8 @@ public:
 
             piece.setXindex(nowy+movy);
             piece.setYindex(nowx+movx);
+            unsigned int microseconds = 500;
+            usleep(microseconds);
 
         }
         piece.setXindex(indx);
@@ -1304,6 +1312,7 @@ void calculate_index(GLfloat x, GLfloat y)
         cout<<endl<<"invalid point y"<<endl;
         return;
     }
+    cout<<endl<<ypos<<endl;
 
     for (int i=0;i<8;i++)
     {
@@ -1312,7 +1321,11 @@ void calculate_index(GLfloat x, GLfloat y)
             cout<<x<<endl;
             xpos= i;
         }
+
+        cout<<endl<<(x_start_points[ypos]+ (i*x_diff[ypos]))<<" " <<(x_start_points[ypos]+ ((i+1)*x_diff[ypos])) <<endl;
     }
+
+
 
     if(xpos==-1)
     {
@@ -1332,7 +1345,7 @@ void calculate_index(GLfloat x, GLfloat y)
         board.getPiece(piece.getID()).setSelected(false);
         board.movePiece(xpos,ypos,piece.getID());
         position[ypos][xpos] = piece.getID();
-        position[piece.getXindex()][piece.getYindex()] = -1;
+        position[piece.getYindex()][piece.getXindex()] = -1;
 
         cout<<"moved to "<<xpos<<" "<<ypos<<endl;
 
@@ -1360,7 +1373,7 @@ void calculate_index(GLfloat x, GLfloat y)
 
     for(int i=0;i<8;i++)
     {
-        for(int j=0;j<9;j++)
+        for(int j=0;j<8;j++)
         {
             cout<<position[i][j]<<" " ;
         }
