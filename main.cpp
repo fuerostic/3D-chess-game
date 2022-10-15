@@ -7,6 +7,7 @@
 #include<math.h>
 #include <time.h>
 #include<iostream>
+#include <bits/stdc++.h>
 #include "BmpLoader.h"
 
 using namespace std;
@@ -27,7 +28,7 @@ GLfloat mat_diffuse[] = { color[0], color[1], color[2], 1.0 };
 GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 GLfloat mat_shininess[] = {60};
 
-GLuint ID[]={1,2,3};
+GLuint ID[]={1,2,3,4};
 
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
@@ -66,6 +67,8 @@ GLfloat ctrlpoints[L+1][3] =
     {6.8, 0.52, 0.0}
 };
 
+
+static int position[8][8];
 
 double ex=0, ey=0, ez=15, lx=0,ly=0,lz=0, hx=0,hy=1,hz=0;
 
@@ -187,7 +190,8 @@ private:
     int xindex;
     int yindex;
     int score;
-
+    bool selected = false;
+    bool reach_end= false;
 
 public:
 
@@ -201,18 +205,18 @@ public:
         }
         else
         {
-            this->texture==2;
+            this->texture=2;
         }
 
         if((ID>=8 && ID<16) || (ID>=16 && ID<24))
         {
             this->score = 1;
         }
-        else if(ID==0 || ID==7 || ID==23 || ID==31)
+        else if(ID==0 || ID==7 || ID==24 || ID==31)
         {
             this->score = 5;
         }
-        else if(ID==1 || ID==2 || ID==6 || ID==5 || ID==24 || ID==25 ||ID==29 ||  ID==30)
+        else if(ID==1 || ID==2 || ID==6 || ID==5 || ID==25 || ID==26 ||ID==29 ||  ID==30)
         {
             this->score = 3;
         }
@@ -224,6 +228,12 @@ public:
             this->score = 100;
         }
 
+    }
+
+    void end_reached()
+    {
+        this->reach_end=true;
+        this->score =9;
     }
     int getID()
     {
@@ -257,6 +267,11 @@ public:
     void setYindex(int y)
     {
         this->yindex = y;
+
+        if((this->ID>=8 && this->ID<16 && this->yindex==7) || (this->ID>=16 && this->ID<24 && this->yindex==0) )
+        {
+            this->end_reached();
+        }
     }
     int getYindex()
     {
@@ -272,6 +287,37 @@ public:
         return this->score;
     }
 
+    bool getSelect()
+    {
+        return this->selected;
+    }
+    void setSelected(bool selected)
+    {
+        this->selected = selected;
+
+        if(selected)
+        {
+            this->texture = 4;
+        }
+        else{
+            if (white)
+            {
+                this->texture=1;
+            }
+            else
+            {
+                this->texture=2;
+            }
+        }
+//        glLoadIdentity();
+//        glPushMatrix();
+//        glColor3f(0,1,1);
+//        glTranslatef(pos_x[this->getXindex()],1,pos_y[this->getYindex()]);
+//        gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
+//        glPopMatrix();
+//        glutSwapBuffers();
+    }
+
     void drawPawn(GLuint ID)
     {
 
@@ -282,6 +328,8 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
         glRotatef(90,1,0,0);
 
         glPushMatrix();
@@ -369,6 +417,8 @@ public:
         glPopMatrix();
 
         glPopMatrix();
+
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
@@ -383,6 +433,8 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
         glRotatef(90,1,0,0);
 
         glPushMatrix();
@@ -489,6 +541,8 @@ public:
 
 
         glPopMatrix();
+
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
@@ -501,6 +555,9 @@ public:
         glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
+
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
 
         glRotatef(90,1,0,0);
 
@@ -607,6 +664,8 @@ public:
 
 
         glPopMatrix();
+
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
@@ -620,6 +679,8 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
         glRotatef(90,1,0,0);
 
         glPushMatrix();
@@ -729,6 +790,7 @@ public:
 
         glPopMatrix();
         glPopMatrix();
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
@@ -741,6 +803,8 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
         glRotatef(90,1,0,0);
 
         glPushMatrix();
@@ -874,6 +938,8 @@ public:
 
 
         glPopMatrix();
+
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
@@ -887,6 +953,8 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
         glRotatef(90,1,0,0);
 
         glPushMatrix();
@@ -1036,12 +1104,50 @@ public:
 
 
         glPopMatrix();
+
+        glPopMatrix();
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
         glDisable(GL_TEXTURE_2D);
     }
 
+    void draw()
+    {
+        if((this->ID>=8 && this->ID<16) || (this->ID>=16 && this->ID<24))
+        {
 
+            if(this->reach_end)
+            {
+                drawQueen(this->texture);
+            }
+            else
+            {
+                this->drawPawn(this->texture);
+            }
+
+
+        }
+        else if (this->ID==0 || this->ID==7 || this->ID==24 || this->ID==31)
+        {
+            this->drawRook(this->texture);
+        }
+        else if(this->ID==1 ||  this->ID==6 || this->ID==25 ||   this->ID==30)
+        {
+            this->drawKnight(this->texture);
+        }
+        else if(this->ID==2 || this->ID==5 || this->ID==26 ||this->ID==29 )
+        {
+            this->drawBishop(this->texture);
+        }
+        else if(this->ID==3 || this->ID==27)
+        {
+            this->drawQueen(this->texture);
+        }
+        else
+        {
+            this->drawKing(this->texture);
+        }
+    }
 
 };
 
@@ -1053,7 +1159,7 @@ private:
     {false,false,false,false,false,false,false,false},{false,false,false,false,false,false,false,false},
     {true,true,true,true,true,true,true,true},{true,true,true,true,true,true,true,true}};
 
-    Piece pieces[] = {  Piece(0,true),Piece(1,true),Piece(2,true),Piece(3,true),
+    Piece pieces[32] = {  Piece(0,true),Piece(1,true),Piece(2,true),Piece(3,true),
                         Piece(4,true),Piece(5,true),Piece(6,true),Piece(7,true),
                         Piece(8,true),Piece(9,true),Piece(10,true),Piece(11,true),
                         Piece(12,true),Piece(13,true),Piece(14,true),Piece(15,true),
@@ -1064,14 +1170,121 @@ private:
 
 public:
 
-    void initialize()
+    Board()
     {
+        int counter= 0;
+
+        for (int i=0;i<8;i++)
+        {
+            for(int j=0;j<8;j++)
+            {
+                position[i][j] = -1;
+            }
+        }
+
         bool white = true;
 
+        for( int i=0;i<8;i++)
+        {
+            for( int j=0;j<8;j++)
+            {
+                if(i<2 || i>5)
+                {
+
+                    position[i][j] = counter;
+                    //cout<< pieces[counter].getXindex()<<" "<<pieces[counter].getYindex() <<endl;
+                    counter++;
+                }
+            }
+        }
     }
 
+    void drawBoard()
+    {
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,3);
+        glTranslatef(-5,0,-5);
+        glScalef(10,1,10);
+        drawCube(1);
+        glPopMatrix();
+
+
+
+        glDisable(GL_TEXTURE_2D);
+    }
+
+
+    void draw()
+    {
+        glPushMatrix();
+
+        this->drawBoard();
+
+        glPopMatrix();
+
+        for( int i=0;i<8;i++)
+        {
+            for( int j=0;j<8;j++)
+            {
+                if(position[i][j]!=-1)
+                {
+                    int counter = position[i][j];
+                    pieces[counter].setXindex(j);
+                    pieces[counter].setYindex(i);
+                    position[i][j] = pieces[counter].getID();
+                    //cout<< pieces[counter].getXindex()<<" "<<pieces[counter].getYindex() <<endl;
+
+                    glPushMatrix();
+                    pieces[counter].draw();
+                    glPopMatrix();
+
+                    counter++;
+                }
+
+                //cout<<position[i][j]<<" ";
+            }
+            //cout<<endl;
+        }
+    }
+
+    Piece getPiece(int ID)
+    {
+        return this->pieces[ID];
+    }
+
+    void movePiece(int indx,int indy,int ID)
+    {
+        Piece piece = this->getPiece(ID);
+        GLfloat movx, movy;
+        int nowx = piece.getYindex();
+        int nowy = piece.getXindex();
+
+        movx = (indx-nowx)/10;
+        movy = (indy-nowy)/10;
+
+        for(int i=0;i<10;i++)
+        {
+
+            piece.setXindex(nowy+movy);
+            piece.setYindex(nowx+movx);
+
+        }
+        piece.setXindex(indx);
+        piece.setYindex(indy);
+
+        glPushMatrix();
+        piece.draw();
+        glPopMatrix();
+
+    }
 };
 
+
+Board board;
+
+stack<Piece>selected;
 
 void calculate_index(GLfloat x, GLfloat y)
 {
@@ -1110,6 +1323,50 @@ void calculate_index(GLfloat x, GLfloat y)
     {
             cout<<endl<<"X: "<<xpos<<"Y: "<<ypos<<endl;
     }
+
+
+    if(position[ypos][xpos]==-1 && !selected.empty())
+    {
+        Piece piece = selected.top();
+        selected.pop();
+        board.getPiece(piece.getID()).setSelected(false);
+        board.movePiece(xpos,ypos,piece.getID());
+        position[ypos][xpos] = piece.getID();
+        position[piece.getXindex()][piece.getYindex()] = -1;
+
+        cout<<"moved to "<<xpos<<" "<<ypos<<endl;
+
+    }
+    else if(position[ypos][xpos]!=-1 && !selected.empty())
+    {
+        Piece piece = selected.top();
+        selected.pop();
+        board.getPiece(piece.getID()).setSelected(false);
+        board.getPiece(position[ypos][xpos]).setSelected(true);
+        Piece piece2 = board.getPiece(position[ypos][xpos]);
+        selected.push(piece2);
+
+        cout<<"selected "<<xpos<<" "<<ypos<<endl;
+    }
+
+    else if(position[ypos][xpos]!=-1 && selected.empty())
+    {
+        board.getPiece(position[ypos][xpos]).setSelected(true);
+        Piece piece2 = board.getPiece(position[ypos][xpos]);
+        selected.push(piece2);
+
+        cout<<"selected "<<xpos<<" "<<ypos<<endl;
+    }
+
+    for(int i=0;i<8;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            cout<<position[i][j]<<" " ;
+        }
+        cout<<endl;
+    }
+
 }
 
 void scsToWcs(float sx,float sy, float wcsv[3] )
@@ -1149,7 +1406,9 @@ void processMouse(int button, int state, int x, int y)
 
         scsToWcs(clkpt[0].x,clkpt[0].y,wcsClkDn);
         calculate_index(wcsClkDn[0],wcsClkDn[1]);
-        cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl; ;
+        cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl;
+
+
     }
     else if(button==GLUT_LEFT_BUTTON && state==GLUT_UP)
     {
@@ -1168,918 +1427,20 @@ void processMouse(int button, int state, int x, int y)
 }
 
 
-void drawPawn(GLuint ID)
+
+void game()
 {
 
+    //Board board;
 
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .25, .4,100, 100);
-    glPopMatrix();
-
-    //middle column
-    glPushMatrix();
-    glTranslatef(0,0,-1);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .15, .4,100, 100);
-    glPopMatrix();
-
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-1.1);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .2, .2, .1,100, 100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-1);
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(0,0,-1.2);
-    glutSolidSphere(.2,32,32);
-    glPopMatrix();
-
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawRook(GLuint ID)
-{
-
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .25, .4,100, 100);
-    glPopMatrix();
-
-    //middle column
-    glPushMatrix();
-    glTranslatef(0,0,-1.2);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .15, .6,100, 100);
-    glPopMatrix();
-
-
-    //upper base
-    glPushMatrix();
-    glTranslatef(0,0,-1.3);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .2, .2, .1,100, 100);
-    glPopMatrix();
-
-    //upper cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.005,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-1.2);
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rook crown
-    glPushMatrix();
-    glTranslatef(0,0,-1.4);
-
-    glPushMatrix();
-    glTranslatef(.15,0,0.05);
-    glutSolidCube(.1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-.15,0,0.05);
-    glutSolidCube(.1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0.15,0.05);
-    glutSolidCube(.1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,-.15,0.05);
-    glutSolidCube(.1);
-    glPopMatrix();
-
-
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawKnight(GLuint ID)
-{
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .25, .4,100, 100);
-    glPopMatrix();
-
-    //body of horse
-
-
-
-    glPushMatrix();
-    glTranslatef(0,0,-1);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), 0, .15, .4,100, 100);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-0.1,0,0);
-    glRotatef(-10,0,1,0);
-
-    glPushMatrix();
-    glRotatef(14,0,1,0);
-    glTranslatef(-0.07,-.075,-1.2);
-    glScalef(.5,.25,1);
-    drawCube(.7);
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(-0.35,-.075,-1.3);
-    glRotatef(-5,0,1,0);
-    glScalef(.5,.25,.25);
-    drawCube(.7);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-0.35,-.075,-1.4);
-    glRotatef(-10,0,1,0);
-    glScalef(.5,.25,.25);
-    drawCube(.7);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-0.35,-.075,-1.5);
-    glRotatef(-15,0,1,0);
-    glScalef(.7,.25,.25);
-    drawCube(.7);
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(-0.3,-.075,-1.6);
-    glRotatef(-30,0,1,0);
-    glScalef(.4,.25,.25);
-    drawCube(.7);
-    glPopMatrix();
-
-    glPopMatrix();
-
-
-
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawBishop(GLuint ID)
-{
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .10, .25, .4,100, 100);
-    glPopMatrix();
-
-    //middle column
-    glPushMatrix();
-    glTranslatef(0,0,-1.2);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .10, .10, .6,100, 100);
-    glPopMatrix();
-
-
-    //upper base
-    glPushMatrix();
-    glTranslatef(0,0,-1.3);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .15, .1,100, 100);
-    glPopMatrix();
-
-    //upper cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.005,.15,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-1.2);
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.15,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //bishop crown
-    glPushMatrix();
-    glTranslatef(0,0,-1.4);
-
-    glPushMatrix();
-    glTranslatef(0,0,-.2);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .1, .02, .6,100, 100);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-.2);
-    glutSolidSphere(.1,32,32);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-.33);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .02, .1, .1,100, 100);
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(0,0,-.35);
-    glutSolidSphere(.03,32,32);
-    glPopMatrix();
-
-    glPopMatrix();
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawQueen(GLuint ID)
-{
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .25, .4,100, 100);
-    glPopMatrix();
-
-    //middle column
-    glPushMatrix();
-    glTranslatef(0,0,-1.4);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .15, .8,100, 100);
-    glPopMatrix();
-
-
-    //upper base
-    glPushMatrix();
-    glTranslatef(0,0,-1.5);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .2, .2, .1,100, 100);
-    glPopMatrix();
-
-    //upper cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.005,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-1.5);
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //queen crown
-    glPushMatrix();
-    glTranslatef(0,0,-1.6);
-
-    glPushMatrix();
-    glTranslatef(0,0,-0.15);
-    gluCylinder(gluNewQuadric(), .2, .15, .3,100, 100);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-0.15);
-    glutSolidTorus(.1,.1,100,100);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-    glutSolidSphere(.13,100,100);
-    glPopMatrix();
-
-//    glPushMatrix();
-//    glTranslatef(-0.02,-0.17,-0.25);
-//    glScalef(.1,.7,.1);
-//    drawCube(.5);
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//    glRotatef(90,0,0,1);
-//    glTranslatef(-0.02,-0.17,-0.25);
-//    glScalef(.1,.7,.1);
-//    drawCube(.5);
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//    glRotatef(45,0,0,1);
-//    glTranslatef(-0.02,-0.17,-0.25);
-//    glScalef(.1,.7,.1);
-//    drawCube(.5);
-//    glPopMatrix();
-//
-//
-//    glPushMatrix();
-//    glRotatef(315,0,0,1);
-//    glTranslatef(-0.02,-0.17,-0.25);
-//    glScalef(.1,.7,.1);
-//    drawCube(.5);
-//    glPopMatrix();
-
-
-
-    glPopMatrix();
-
-
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawKing(GLuint ID)
-{
-
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glEnable(GL_TEXTURE_GEN_T);
-    glBindTexture(GL_TEXTURE_2D,ID);
-
-    glRotatef(90,1,0,0);
-
-    glPushMatrix();
-
-    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-
-    //lower base
-    glPushMatrix();
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .4, .4, .2,100, 100);
-    glutSolidTorus(.1,.3,100,100);
-    glPopMatrix();
-
-    //lower base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.4,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //lower 2nd base
-    glPushMatrix();
-    glTranslatef(0,0,-0.2);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-    glutSolidTorus(.1,.2,100,100);
-    glPopMatrix();
-
-    //lower 2nd base cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.3,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //rising middle column
-    glPushMatrix();
-    glTranslatef(0,0,-0.6);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .25, .4,100, 100);
-    glPopMatrix();
-
-    //middle column
-    glPushMatrix();
-    glTranslatef(0,0,-1.4);
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .15, .15, .8,100, 100);
-    glPopMatrix();
-
-
-    //upper base
-    glPushMatrix();
-    glTranslatef(0,0,-1.5);
-
-    glPushMatrix();
-    glScalef(1,1,1);
-    gluCylinder(gluNewQuadric(), .2, .2, .1,100, 100);
-    glPopMatrix();
-
-    //upper cover
-    glPushMatrix();
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.005,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-1.5);
-    glRotatef(180,1,0,0);
-    gluDisk(gluNewQuadric(),.1,.2,32,32);
-    glPopMatrix();
-    glPopMatrix();
-
-    //king crown
-    glPushMatrix();
-    glTranslatef(0,0,-1.6);
-
-    glPushMatrix();
-    glTranslatef(0,0,-0.15);
-    gluCylinder(gluNewQuadric(), .2, .15, .3,100, 100);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0,0,-0.15);
-    glutSolidTorus(.1,.1,100,100);
-    glPopMatrix();
-
-    glPushMatrix();
-    //glRotatef(90,1,0,0);
-    glTranslatef(-0.02,-0.025,-0.6);
-    glScalef(.05,.05,.7);
-    drawCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(3,0,1,0);
-    glTranslatef(-0.02,-0.025,-0.6);
-    glScalef(.05,.05,.7);
-    drawCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(-3,0,1,0);
-    glTranslatef(-0.02,-0.025,-0.6);
-    glScalef(.05,.05,.7);
-    drawCube(1);
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(-0.15,-0.025,-0.4);
-    glRotatef(90,0,1,0);
-    glScalef(.05,.05,.3);
-    drawCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(-0.15,-0.025,-0.4);
-    glRotatef(95,0,1,0);
-    glScalef(.05,.05,.3);
-    drawCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(81,0,1,0);
-    glTranslatef(.4,-0.025,-0.22);
-    glScalef(.05,.05,.3);
-    drawCube(1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(95,0,1,0);
-    glTranslatef(.4,-0.025,-0.11);
-    glScalef(.05,.05,.3);
-    drawCube(1);
-    glPopMatrix();
-
-
-    glPopMatrix();
-
-
-    glPopMatrix();
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
-
-void drawBoard()
-{
-    glEnable(GL_TEXTURE_2D);
-
-    glPushMatrix();
-    glBindTexture(GL_TEXTURE_2D,3);
-    glTranslatef(-5,0,-5);
-    glScalef(10,1,10);
-    drawCube(1);
-    glPopMatrix();
-
-
-
-    glDisable(GL_TEXTURE_2D);
-}
-
-void game(GLfloat x, GLfloat z)
-{
-    glPushMatrix();
-
     glPushMatrix();
-    drawBoard();
-    glPopMatrix();
-
-
-    glPushMatrix();
-    glTranslatef(x,1,z);
-    drawBishop(1);
-    glPopMatrix();
-
-
+    board.draw();
     glPopMatrix();
 
 }
 
 
-void initialize()
-{
-    bool sides[16] ;
-    for(int i=0;i<16;i++)
-    {
-        sides[i] = true;
-    }
 
-
-    glPushMatrix();
-
-    glPushMatrix();
-    drawBoard();
-    glPopMatrix();
-    int val =1;
-    int c = 0;
-
-    for(int  i=0;i<8;i++)
-    {
-        if(i>=2 && i<=5)
-            continue;
-
-
-
-        for(int j=0;j<8;j++)
-        {
-
-            if (i>2)
-            {
-                val = 2;
-            }else
-            {
-                val =1;
-            }
-
-
-            glPushMatrix();
-            glTranslatef(pos_x[j],1,pos_y[i]);
-
-            if(i==1 || i==6)
-            {
-                drawPawn(val);
-                sides[i+j] = false;
-            }
-            else{
-
-
-
-                    if(j==0 || j==7)
-                    {
-                        drawRook(val);
-                        sides[i+j] = false;
-                    }
-
-                    else if(j==1 || j==6)
-                    {
-                        drawKnight(val);
-                        sides[i+j] = false;
-                    }
-
-                    else if(j==2 || j==5)
-                    {
-                        drawBishop(val);
-                        sides[i+j] = false;
-                    }
-
-                    else if((j==3))
-                    {
-                        if(val==1)
-                        {
-                            drawQueen(val);
-                            sides[i+j] = false;
-                        }
-                        else
-                        {
-                            drawKing(val);
-                            sides[i+j] = false;
-                        }
-
-                    }
-
-                    else if((j==4))
-                    {
-                        if(val==2)
-                        {
-                            drawQueen(val);
-                            sides[i+j] = false;
-                        }
-                        else
-                        {
-                            drawKing(val);
-                            sides[i+j] = false;
-                        }
-
-                    }
-
-            }
-
-
-
-            glPopMatrix();
-        }
-    }
-
-
-    glPopMatrix();
-}
 void myKeyboardFunc( unsigned char key, int x, int y )
 {
     switch ( key )
@@ -2232,8 +1593,9 @@ void display(void)
     //drawBishop(1);
     //drawQueen(1);
     //drawKing(1);
-    //game(0.5,1.5);
-    initialize();
+    //game();
+    board.draw();
+    //initialize();
     glPopMatrix();
 
 
@@ -2267,6 +1629,8 @@ int main (int argc, char **argv)
     glEnable( GL_DEPTH_TEST );
     glEnable(GL_NORMALIZE);
     glEnable(GL_LIGHTING);
+
+    Board board;
 
     light();
 

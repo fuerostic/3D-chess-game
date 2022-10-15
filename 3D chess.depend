@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665828151 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1665836203 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -7,6 +7,7 @@
 	<stdlib.h>
 	<stdio.h>
 	<math.h>
+	<time.h>
 	<iostream>
 	"BmpLoader.h"
 
