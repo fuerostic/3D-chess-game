@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1665863683 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1665940986 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>

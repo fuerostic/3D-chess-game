@@ -35,7 +35,7 @@ GLuint ID[]={1,2,3,4};
 
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
-GLfloat x_diff[] = {0.5,0.5,0.63,0.7,0.7,0.7,0.8,0.82};
+GLfloat x_diff[] = {0.5,0.6,0.63,0.7,0.7,0.7,0.8,0.82};
 GLfloat y_diff[] = {0.23,0.25,0.3,0.3,0.35,0.4,0.4,0.45};
 
 GLfloat x_start_points[] = {-2.37,-2.48,-2.59,-2.72,-2.85,-3,-3.21,-3.42,-3.61};
@@ -55,23 +55,8 @@ const int nt = 40;				//number of slices along x-direction
 const int ntheta = 20;
 
 
-GLfloat ctrlpoints[L+1][3] =
-{
-    { 0.0, 0.0, 0.0}, { -0.3, 0.5, 0.0},
-    { 0.1, 1.7, 0.0},{ 0.5, 1.5, 0.0},
-    {1.0, 1.5, 0.0}, {1.4, 1.4, 0.0},
-    {1.8, 0.4, 0.0},{2.2, 0.4, 0.0},
-    {2.6, 1.5, 0.0}, {3.0, 1.4, 0.0},
-    {3.4, 1.4, 0.0},{3.8, 1.4, 0.0},
-    {4.2, 1.0, 0.0},{4.6, 1.0, 0.0},
-    {5.0, 1.0, 0.0},{5.4, 1.0, 0.0},
-    {5.8, 0.5, 0.0},{6.2, 0.5, 0.0},
-    {6.6, 0.5, 0.0},{7.2, 0.2, 0.0},
-    {6.8, 0.52, 0.0}
-};
-
-
 static int position[8][8];
+static int selected_position[8][8];
 
 double ex=0, ey=0, ez=15, lx=0,ly=0,lz=0, hx=0,hy=1,hz=0;
 
@@ -300,12 +285,14 @@ public:
 
         if(selected)
         {
-            this->texture = 4;
-            //this->draw();
-            cout<<endl<<this->texture<<endl;
+
+            selected_position[this->xindex][this->yindex] =1;
+            //cout<<endl<<this->texture<<endl;
 
         }
         else{
+
+            selected_position[this->xindex][this->yindex] =0;
             if (white)
             {
                 this->texture=1;
@@ -315,18 +302,21 @@ public:
                 this->texture=2;
             }
         }
-//        glLoadIdentity();
-//        glPushMatrix();
-//        glColor3f(0,1,1);
-//        glTranslatef(pos_x[this->getXindex()],1,pos_y[this->getYindex()]);
-//        gluCylinder(gluNewQuadric(), .3, .3, .2,100, 100);
-//        glPopMatrix();
-//        glutSwapBuffers();
+
+//        for(int i=0;i<8;i++)
+//        {
+//            for(int j=0;j<8;j++)
+//            {
+//                cout<<selected_position[i][j]<<" ";
+//            }
+//
+//            cout<<endl;
+//        }
+
     }
 
     void drawPawn(GLuint ID)
     {
-
 
 
         glEnable(GL_TEXTURE_2D);
@@ -1155,11 +1145,45 @@ public:
         }
     }
 
+     void draw_selection()
+    {
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+        glEnable(GL_TEXTURE_GEN_T);
+        glBindTexture(GL_TEXTURE_2D,4);
+
+        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        glPushMatrix();
+        //glColor3f(0,1,0);
+
+
+        glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
+        glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
+        glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
+
+        glPushMatrix();
+        glTranslatef(-0.5,-.1,-.48);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glPopMatrix();
+
+        cout << "created in "<<pos_x[this->yindex]<<" "<<pos_y[this->xindex]<<endl;
+
+        glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
+
 };
 
 class Board
 {
 private:
+    bool white;
+
     bool board_filled[8][8] = {{true,true,true,true,true,true,true,true},{true,true,true,true,true,true,true,true},
     {false,false,false,false,false,false,false,false},{false,false,false,false,false,false,false,false},
     {false,false,false,false,false,false,false,false},{false,false,false,false,false,false,false,false},
@@ -1196,7 +1220,7 @@ public:
             {
                 if(i<2 || i>5)
                 {
-
+                    selected_position[i][j] = 0;
                     position[i][j] = counter;
                     //cout<< pieces[counter].getXindex()<<" "<<pieces[counter].getYindex() <<endl;
                     counter++;
@@ -1204,6 +1228,7 @@ public:
             }
         }
     }
+
 
     void drawBoard()
     {
@@ -1222,8 +1247,11 @@ public:
     }
 
 
+
+
     void draw()
     {
+        glPushMatrix();
         glPushMatrix();
 
         this->drawBoard();
@@ -1246,13 +1274,25 @@ public:
                     pieces[counter].draw();
                     glPopMatrix();
 
+                    if(selected_position[j][i]==1)
+                    {
+                        glPushMatrix();
+                        pieces[counter].draw_selection();
+                        glPopMatrix();
+                    }
+
+
                     counter++;
                 }
+
+
 
                 //cout<<position[i][j]<<" ";
             }
             //cout<<endl;
         }
+
+        glPopMatrix();
     }
 
     Piece getPiece(int ID)
@@ -1572,6 +1612,52 @@ void light()
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
     glLightf( GL_LIGHT0, GL_SPOT_CUTOFF, 10.0); */
 }
+void draw_selection()
+{
+//    glEnable(GL_TEXTURE_2D);
+//    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+//    glEnable(GL_TEXTURE_GEN_T);
+//    glBindTexture(GL_TEXTURE_2D,4);
+
+    glTranslatef(pos_x[7],1,pos_y[7]);
+    glPushMatrix();
+    glColor3f(0,1,0);
+
+
+//    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
+//    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
+//    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
+//    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
+
+    glPushMatrix();
+    glTranslatef(-0.5,-.1,-.48);
+    glScalef(1,.2,1);
+    drawCube(1);
+    glPopMatrix();
+
+    glPopMatrix();
+
+
+    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+    glDisable(GL_TEXTURE_GEN_T);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void drawBoard()
+{
+    glEnable(GL_TEXTURE_2D);
+
+    glPushMatrix();
+    glBindTexture(GL_TEXTURE_2D,3);
+    glTranslatef(-5,0,-5);
+    glScalef(10,1,10);
+    drawCube(1);
+    glPopMatrix();
+
+
+
+    glDisable(GL_TEXTURE_2D);
+}
 
 void display(void)
 {
@@ -1600,6 +1686,7 @@ void display(void)
     glRotatef(Tyval,1,0,0);
     glScalef(gscale,gscale,gscale);
     //drawBoard();
+    //draw_selection();
     //drawPawn(1);
     //drawRook(1);
     //drawKnight(1);
@@ -1609,6 +1696,7 @@ void display(void)
     //game();
     board.draw();
     //initialize();
+
     glPopMatrix();
 
 
@@ -1649,6 +1737,7 @@ int main (int argc, char **argv)
 
     glutKeyboardFunc(myKeyboardFunc);
     glutMouseFunc(processMouse);
+    //glutFullScreen();
     glutDisplayFunc(display);
     glutIdleFunc(animate);
     glutMainLoop();
