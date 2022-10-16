@@ -1392,12 +1392,23 @@ void calculate_index(GLfloat x, GLfloat y)
     }
     else if(position[ypos][xpos]!=-1 && !selected.empty())
     {
+
+
         Piece piece = selected.top();
         selected.pop();
-        board.getPiece(piece.getID()).setSelected(false);
-        board.getPiece(position[ypos][xpos]).setSelected(true);
-        Piece piece2 = board.getPiece(position[ypos][xpos]);
-        selected.push(piece2);
+
+        if(piece.getXindex()==xpos && piece.getYindex()==ypos)
+        {
+            board.getPiece(piece.getID()).setSelected(false);
+        }
+        else
+        {
+            board.getPiece(piece.getID()).setSelected(false);
+            board.getPiece(position[ypos][xpos]).setSelected(true);
+            Piece piece2 = board.getPiece(position[ypos][xpos]);
+            selected.push(piece2);
+        }
+
 
         cout<<"selected "<<xpos<<" "<<ypos<<endl;
     }
