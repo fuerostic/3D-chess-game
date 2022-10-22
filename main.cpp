@@ -31,7 +31,7 @@ GLfloat mat_diffuse[] = { color[0], color[1], color[2], 1.0 };
 GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 GLfloat mat_shininess[] = {60};
 
-GLuint ID[]={1,2,3,4,5};
+GLuint ID[]={1,2,3,4,5,6};
 
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
@@ -1476,11 +1476,25 @@ public:
         glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
         glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
 
-        glPushMatrix();
-        glTranslatef(-0.5,-.1,-.48);
-        glScalef(1,.2,1);
-        drawCube(.5);
-        glPopMatrix();
+
+        if(ID==6)
+        {
+            glPushMatrix();
+            glTranslatef(-0.125,-.1,-.124);
+            glScalef(.25,.2,.25);
+            drawCube(1);
+            glPopMatrix();
+        }
+        else
+        {
+            glPushMatrix();
+            glTranslatef(-0.5,-.1,-.48);
+            glScalef(1,.2,1);
+            drawCube(1);
+            glPopMatrix();
+        }
+
+
 
         glPopMatrix();
 
@@ -1600,24 +1614,24 @@ public:
                         pieces[counter].resetValidMoves();
                         pieces[counter].calculate_valid_moves();
 
-                        cout<<"valid moves"<<endl;
+                        //cout<<"valid moves"<<endl;
 
                         for(pair<int,int> i: pieces[counter].getValidMoves())
                         {
-                            cout<< "("<<i.first<<","<<i.second<<"),";
+                            //cout<< "("<<i.first<<","<<i.second<<"),";
                             glPushMatrix();
-                            pieces[counter].draw_valid_move(4,i.first,i.second);
+                            pieces[counter].draw_valid_move(6,i.first,i.second);
                             glPopMatrix();
                         }
-                        cout<<endl<<"scoring moves"<<endl;
+                        //cout<<endl<<"scoring moves"<<endl;
                         for(pair<int,int> i: pieces[counter].getScoringMoves())
                         {
-                            cout<< "("<<i.first<<","<<i.second<<"),";
+                            //cout<< "("<<i.first<<","<<i.second<<"),";
                             glPushMatrix();
                             pieces[counter].draw_valid_move(5,i.first,i.second);
                             glPopMatrix();
                         }
-                        cout<<endl ;
+                        //cout<<endl ;
                     }
 
 
@@ -1645,6 +1659,7 @@ public:
     {
         Piece piece = this->getPiece(ID);
         GLfloat movx, movy;
+
         int nowx = piece.getYindex();
         int nowy = piece.getXindex();
 
@@ -1722,13 +1737,35 @@ void calculate_index(GLfloat x, GLfloat y)
     if(position[ypos][xpos]==-1 && !selected.empty())
     {
         Piece piece = selected.top();
-        selected.pop();
-        board.getPiece(piece.getID()).setSelected(false);
-        board.movePiece(xpos,ypos,piece.getID());
-        position[ypos][xpos] = piece.getID();
-        position[piece.getYindex()][piece.getXindex()] = -1;
 
-        cout<<"moved to "<<xpos<<" "<<ypos<<endl;
+        piece.resetValidMoves();
+        piece.calculate_valid_moves();
+
+        vector <pair<int,int>> valids = piece.getValidMoves();
+        vector <pair<int,int>> scores = piece.getScoringMoves();
+
+        pair<int,int> i = make_pair(xpos,ypos);
+
+        //cout<<"move on : " <<i.first <<" "<<i.second<<endl;
+        //cout<<"valids"<<endl;
+//        for(pair<int,int> j: valids)
+//        {
+//            cout<< j.first<<" "<<j.second<<endl;
+//        }
+
+        if (find(valids.begin(), valids.end(), i) != valids.end())
+        {
+            selected.pop();
+            board.getPiece(piece.getID()).setSelected(false);
+            board.movePiece(xpos,ypos,piece.getID());
+            position[ypos][xpos] = piece.getID();
+            position[piece.getYindex()][piece.getXindex()] = -1;
+
+            cout<<"moved to "<<xpos<<" "<<ypos<<endl;
+        }
+        else
+            return;
+
 
     }
     else if(position[ypos][xpos]!=-1 && !selected.empty())
@@ -1751,7 +1788,7 @@ void calculate_index(GLfloat x, GLfloat y)
         }
 
 
-        cout<<"selected "<<xpos<<" "<<ypos<<endl;
+        //cout<<"selected "<<xpos<<" "<<ypos<<endl;
     }
 
     else if(position[ypos][xpos]!=-1 && selected.empty())
@@ -1760,17 +1797,17 @@ void calculate_index(GLfloat x, GLfloat y)
         Piece piece2 = board.getPiece(position[ypos][xpos]);
         selected.push(piece2);
 
-        cout<<"selected "<<xpos<<" "<<ypos<<endl;
+        //cout<<"selected "<<xpos<<" "<<ypos<<endl;
     }
 
-    for(int i=0;i<8;i++)
-    {
-        for(int j=0;j<8;j++)
-        {
-            cout<<position[i][j]<<" " ;
-        }
-        cout<<endl;
-    }
+//    for(int i=0;i<8;i++)
+//    {
+//        for(int j=0;j<8;j++)
+//        {
+//            cout<<position[i][j]<<" " ;
+//        }
+//        cout<<endl;
+//    }
 
 }
 
