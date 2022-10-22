@@ -31,11 +31,11 @@ GLfloat mat_diffuse[] = { color[0], color[1], color[2], 1.0 };
 GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 GLfloat mat_shininess[] = {60};
 
-GLuint ID[]={1,2,3,4};
+GLuint ID[]={1,2,3,4,5};
 
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
-GLfloat x_diff[] = {0.5,0.6,0.63,0.7,0.7,0.7,0.8,0.82};
+GLfloat x_diff[] = {0.55,0.6,0.63,0.7,0.7,0.7,0.8,0.82};
 GLfloat y_diff[] = {0.23,0.25,0.3,0.3,0.35,0.4,0.4,0.45};
 
 GLfloat x_start_points[] = {-2.37,-2.48,-2.59,-2.72,-2.85,-3,-3.21,-3.42,-3.61};
@@ -55,7 +55,19 @@ const int nt = 40;				//number of slices along x-direction
 const int ntheta = 20;
 
 
+const int king_moves[2][8] = {{0,0,1,1,1,-1,-1,-1},{1,-1,0,1,-1,0,1,-1}};
+const int queen_moves[2][8] = {{0,0,1,1,1,-1,-1,-1},{1,-1,0,1,-1,0,1,-1}};
+const int bishop_moves[2][4] = {{1,1,-1,-1}, {1,-1,1,-1} };
+const int knight_moves[2][8] = { {1,1,2,2,-1,-1,-2,-2}, {2,-2,1,-1,2,-2,1,-1} };
+const int rook_moves[2][4] = { {0,0,1,-1}, {1,-1,0,0} };
+const int pawn_moves[2][3] = { {0,-1,1}, {1,1,1} };
+
+
+
+
 static int position[8][8];
+static int valid_places[8][8];
+static int scoring_position[8][8];
 static int selected_position[8][8];
 
 double ex=0, ey=0, ez=15, lx=0,ly=0,lz=0, hx=0,hy=1,hz=0;
@@ -180,6 +192,9 @@ private:
     int score;
     bool selected = false;
     bool reach_end= false;
+    vector<pair<int,int>> valid_moves;
+    vector<pair<int,int>> scoring_moves;
+    int direction = 1;
 
 public:
 
@@ -190,10 +205,13 @@ public:
         if (white)
         {
             this->texture=1;
+            this->direction = 1;
         }
         else
         {
             this->texture=2;
+            this->direction = -1;
+
         }
 
         if((ID>=8 && ID<16) || (ID>=16 && ID<24))
@@ -216,6 +234,270 @@ public:
             this->score = 100;
         }
 
+    }
+
+    vector<pair<int,int>> getValidMoves()
+    {
+        return this->valid_moves;
+    }
+
+    vector<pair<int,int>> getScoringMoves()
+    {
+        return this->scoring_moves;
+    }
+
+    void resetValidMoves()
+    {
+        valid_moves.clear();
+        scoring_moves.clear();
+    }
+    void calculate_valid_moves()
+    {
+        int tempx;
+        int tempy;
+
+        if((this->ID>=8 && this->ID<16) || (this->ID>=16 && this->ID<24))
+        {
+            for(int i =0;i<3;i++)
+            {
+                tempx = this->xindex + pawn_moves[0][i];
+                tempy = this->yindex + (this->direction * pawn_moves[1][i]);
+
+
+                if ((tempx<0 || tempy <0 || tempx>8 || tempy>8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16)) && position[tempy][tempx]!=-1 )
+                {
+                    continue;
+                }
+
+                else if(position[tempy][tempx]==-1 && i==0)
+                {
+                    this->valid_moves.push_back(make_pair(tempx,tempy));
+                }
+                else
+                {
+                    if(position[tempy][tempx]<16 && position[tempy][tempx]!=-1 && this->ID>=16 && i!=0)
+                    {
+                        this->scoring_moves.push_back(make_pair(tempx,tempy));
+                    }
+                    else if(position[tempy][tempx]>=16 && this->ID<16 && i!=0)
+                    {
+                        this->scoring_moves.push_back(make_pair(tempx,tempy));
+                    }
+                }
+            }
+        }
+        else if(this->ID==0 || this->ID==7 || this->ID==24 || this->ID==31)
+        {
+
+
+                for(int i =0;i<4;i++)
+                {
+                    int traverse=1;
+
+                    while(traverse<9)
+                    {
+                     tempx = this->xindex + (rook_moves[0][i]*traverse);
+                    tempy = this->yindex + (rook_moves[1][i]*traverse);
+
+
+
+
+                        if (tempx<0 || tempy <0 || tempx>=8 || tempy>=8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16))
+                        {
+                            break ;
+                        }
+                        else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
+                        {
+                            this->valid_moves.push_back(make_pair(tempx,tempy));
+                        }
+                        else
+                        {
+                            if(position[tempy][tempx]<16 && this->ID>=16)
+                            {
+                                this->scoring_moves.push_back(make_pair(tempx,tempy));
+                                break;
+                            }
+                            else if(position[tempy][tempx]>=16 && this->ID<16)
+                            {
+                                this->scoring_moves.push_back(make_pair(tempx,tempy));
+                                break;
+                            }
+                        }
+
+
+                    traverse++;
+                    }
+
+
+
+                }
+        }
+        else if(this->ID==2 || this->ID==5 ||  this->ID==26 ||this->ID==29 )
+        {
+
+                for(int i =0;i<4;i++)
+                {
+                    int traverse=1;
+
+                    while(traverse<9)
+                    {
+                    tempx = this->xindex + (bishop_moves[0][i]*traverse);
+                    tempy = this->yindex + (bishop_moves[1][i]*traverse);
+
+                    //cout<<"tempx " <<tempx <<" tempy "<<tempy << " " << position[tempy][tempx]<<endl;
+
+                    if (tempx<0 || tempy <0 || tempx>=8 || tempy>=8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16))
+                    {
+                        break;
+                    }
+                    else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
+                    {
+                        this->valid_moves.push_back(make_pair(tempx,tempy));
+                    }
+                    else
+                    {
+                        if(position[tempy][tempx]<16 && this->ID>=16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                        else if(position[tempy][tempx]>=16 && this->ID<16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                    }
+
+                    traverse++;
+                }
+
+
+
+            }
+        }
+        else if(this->ID==1 ||  this->ID==6 ||  this->ID==25 ||  this->ID==30)
+        {
+
+
+                for(int i =0;i<8;i++)
+                {
+                    int traverse=1;
+
+                    while(traverse<2)
+                    {
+                    tempx = this->xindex + (knight_moves[0][i]*traverse);
+                    tempy = this->yindex + (knight_moves[1][i]*traverse);
+
+                    if (tempx<0 || tempy <0 || tempx>=8 || tempy>=8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16))
+                    {
+                        break;
+                    }
+                    else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
+                    {
+                        this->valid_moves.push_back(make_pair(tempx,tempy));
+                    }
+                    else
+                    {
+                        if(position[tempy][tempx]<16 && this->ID>=16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                        else if(position[tempy][tempx]>=16 && this->ID<16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                    }
+
+                    traverse++;
+                }
+
+
+
+            }
+        }
+        else if(this->ID==3 || this->ID==27)
+        {
+
+                for(int i =0;i<8;i++)
+                {
+                    int traverse=1;
+
+                    while(traverse<9)
+                    {
+
+                    tempx = this->xindex + (queen_moves[0][i]*traverse);
+                    tempy = this->yindex + (queen_moves[1][i]*traverse);
+
+                    if (tempx<0 || tempy <0 || tempx>=8 || tempy>=8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16))
+                    {
+                        break;
+                    }
+                    else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
+                    {
+                        this->valid_moves.push_back(make_pair(tempx,tempy));
+                    }
+                    else
+                    {
+                        if(position[tempy][tempx]<16 && this->ID>=16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                        else if(position[tempy][tempx]>=16 && this->ID<16)
+                        {
+                            this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            break;
+                        }
+                    }
+                    traverse++;
+                }
+
+            }
+        }
+        else{
+            for(int i =0;i<8;i++)
+            {
+                tempx = this->xindex + king_moves[0][i];
+                tempy = this->yindex + (king_moves[1][i]);
+
+                if (tempx<0 || tempy <0 || tempx>=8 || tempy>=8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16))
+                {
+                    continue;
+                }
+
+                else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
+                {
+                    this->valid_moves.push_back(make_pair(tempx,tempy));
+                }
+                else
+                {
+                    if(position[tempy][tempx]<16 && this->ID>=16)
+                    {
+                        this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        break;
+                    }
+                    else if(position[tempy][tempx]>=16 && this->ID<16)
+                    {
+                        this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        break;
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+    }
+
+
+    int getDirection()
+    {
+        return this->direction;
     }
 
     void end_reached()
@@ -1170,7 +1452,39 @@ public:
 
         glPopMatrix();
 
-        cout << "created in "<<pos_x[this->yindex]<<" "<<pos_y[this->xindex]<<endl;
+        //cout << "created in "<<pos_x[this->yindex]<<" "<<pos_y[this->xindex]<<endl;
+
+        glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+        glDisable(GL_TEXTURE_GEN_T);
+        glDisable(GL_TEXTURE_2D);
+    }
+
+    void draw_valid_move(int ID,int x,int y)
+    {
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
+        glEnable(GL_TEXTURE_GEN_T);
+        glBindTexture(GL_TEXTURE_2D,ID);
+
+        glTranslatef(pos_x[x],1,pos_y[y]);
+        glPushMatrix();
+        //glColor3f(0,1,0);
+
+
+        glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
+        glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
+        glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
+
+        glPushMatrix();
+        glTranslatef(-0.5,-.1,-.48);
+        glScalef(1,.2,1);
+        drawCube(.5);
+        glPopMatrix();
+
+        glPopMatrix();
+
+        //cout << "created in "<<pos_x[this->yindex]<<" "<<pos_y[this->xindex]<<endl;
 
         glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
         glDisable(GL_TEXTURE_GEN_T);
@@ -1209,6 +1523,9 @@ public:
             for(int j=0;j<8;j++)
             {
                 position[i][j] = -1;
+                valid_places[i][j] = -1;
+                scoring_position[i][j] = -1;
+                selected_position[i][j] = -1;
             }
         }
 
@@ -1279,7 +1596,31 @@ public:
                         glPushMatrix();
                         pieces[counter].draw_selection();
                         glPopMatrix();
+
+                        pieces[counter].resetValidMoves();
+                        pieces[counter].calculate_valid_moves();
+
+                        cout<<"valid moves"<<endl;
+
+                        for(pair<int,int> i: pieces[counter].getValidMoves())
+                        {
+                            cout<< "("<<i.first<<","<<i.second<<"),";
+                            glPushMatrix();
+                            pieces[counter].draw_valid_move(4,i.first,i.second);
+                            glPopMatrix();
+                        }
+                        cout<<endl<<"scoring moves"<<endl;
+                        for(pair<int,int> i: pieces[counter].getScoringMoves())
+                        {
+                            cout<< "("<<i.first<<","<<i.second<<"),";
+                            glPushMatrix();
+                            pieces[counter].draw_valid_move(5,i.first,i.second);
+                            glPopMatrix();
+                        }
+                        cout<<endl ;
                     }
+
+
 
 
                     counter++;
@@ -1623,36 +1964,7 @@ void light()
     glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
     glLightf( GL_LIGHT0, GL_SPOT_CUTOFF, 10.0); */
 }
-void draw_selection()
-{
-//    glEnable(GL_TEXTURE_2D);
-//    glEnable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-//    glEnable(GL_TEXTURE_GEN_T);
-//    glBindTexture(GL_TEXTURE_2D,4);
 
-    glTranslatef(pos_x[7],1,pos_y[7]);
-    glPushMatrix();
-    glColor3f(0,1,0);
-
-
-//    glMaterialfv( GL_FRONT, GL_AMBIENT, mat_ambient);
-//    glMaterialfv( GL_FRONT, GL_DIFFUSE, mat_diffuse);
-//    glMaterialfv( GL_FRONT, GL_SPECULAR, mat_specular);
-//    glMaterialfv( GL_FRONT, GL_SHININESS, mat_shininess);
-
-    glPushMatrix();
-    glTranslatef(-0.5,-.1,-.48);
-    glScalef(1,.2,1);
-    drawCube(1);
-    glPopMatrix();
-
-    glPopMatrix();
-
-
-    glDisable(GL_TEXTURE_GEN_S); //enable texture coordinate generation
-    glDisable(GL_TEXTURE_GEN_T);
-    glDisable(GL_TEXTURE_2D);
-}
 
 void drawBoard()
 {
