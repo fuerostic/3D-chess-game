@@ -15,6 +15,8 @@
 #include <unistd.h>
 #include "Board.h"
 
+
+
 class Game
 {
 private:
@@ -24,7 +26,8 @@ private:
     bool pause ;
     bool finished ;
     bool computerWon;
-    bool computerTurn;
+
+
 
 
 public:
@@ -33,8 +36,41 @@ public:
         this->pause = false;
         this->finished =false;
         this->computerWon = false;
-        this->computerTurn = false;
+
     }
+
+//    Board move_virtual_piece(int pos[][8],Piece piece,int x, int y,Board board)
+//    {
+//        pos
+//        board.getPiece(piece.getID()).setXindex(x);
+//        board.getPiece(piece.getID()).setYindex(y);
+//
+//
+//
+//    }
+
+
+
+
+
+
+//    int  minimax(int pos[][8],Board board,int score, int depth, bool isComputerMax,int alpha,int beta)
+//    {
+//
+//
+//        if (isMaximizingPlayer)
+//        {
+//            int bestVal= -10000;
+//
+//            for(int i=0;i<16;i++)
+//            {
+//                Piece piece = pieces[i];
+//
+//            }
+//
+//
+//        }
+//    }
 
 
     Board& getBoard()
@@ -72,15 +108,7 @@ public:
         return this->computerWon;
     }
 
-    void changeTurn()
-    {
-        this->computerTurn = !this->computerTurn;
-    }
 
-    bool isComputerTurn()
-    {
-        return this->computerTurn;
-    }
 };
 
 

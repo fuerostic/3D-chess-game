@@ -29,6 +29,7 @@ private:
     bool checkmate;
     bool white;
     int piece_set[16];
+    vector<pair<pair<int,int>,int> > all_moves;
 
 
 
@@ -40,10 +41,7 @@ public:
         cout<<"Destroyed objects"<<endl;
     }
 
-    void calculateAllValidMoves()
-    {
 
-    }
 
     int getID()
     {

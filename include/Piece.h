@@ -34,6 +34,7 @@ extern GLfloat y_diff[] ;
 extern GLfloat x_start_points[] ;
 extern GLfloat y_start_points[] ;
 
+extern int score_by_id[32];
 
 extern float color[];
 extern GLfloat no_mat[] ;
@@ -65,9 +66,11 @@ private:
     bool reach_end= false;
     vector<pair<int,int>> valid_moves;
     vector<pair<int,int>> scoring_moves;
+    vector<pair<pair<int,int>,int> >scores;
     int direction = 1;
     bool caught;
     bool computer;
+    pair<pair<int,int>,int> best_move;
 
 public:
 
@@ -77,6 +80,7 @@ public:
         this->white = white;
         this->caught = false;
         this->computer = computer;
+        this->best_move= make_pair(make_pair(-1,-1),-1);
         if (white)
         {
             this->texture=1;
@@ -118,6 +122,22 @@ public:
         ;
     }
 
+    pair<pair<int,int>,int> calculate_best_move()
+    {
+        this->resetValidMoves();
+        this->calculate_valid_moves();
+
+        for(pair<pair<int,int>,int> i: scores)
+        {
+            if(i.second > best_move.second)
+            {
+                best_move = i;
+            }
+        }
+
+        return best_move;
+    }
+
     vector<pair<int,int>> getValidMoves()
     {
         return this->valid_moves;
@@ -128,11 +148,19 @@ public:
         return this->scoring_moves;
     }
 
+    vector<pair<pair<int,int>,int> > getAllScores()
+    {
+        return this->scores;
+    }
+
     void resetValidMoves()
     {
-        valid_moves.clear();
-        scoring_moves.clear();
+        this->valid_moves.clear();
+        this->scoring_moves.clear();
+        this->scores.clear();
     }
+
+
     void calculate_valid_moves()
     {
         int tempx;
@@ -148,22 +176,28 @@ public:
 
                 if ((tempx<0 || tempy <0 || tempx>8 || tempy>8 || (position[tempy][tempx]<16  && position[tempy][tempx]!=-1  && this->ID<16) || (position[tempy][tempx]>=16 && this->ID>=16)) && position[tempy][tempx]!=-1 )
                 {
-                    continue;
+                    break;
                 }
 
                 else if(position[tempy][tempx]==-1 && i==0)
                 {
                     this->valid_moves.push_back(make_pair(tempx,tempy));
+                    this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
+
                 }
                 else
                 {
                     if(position[tempy][tempx]<16 && position[tempy][tempx]!=-1 && this->ID>=16 && i!=0)
                     {
                         this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
+                        break;
                     }
                     else if(position[tempy][tempx]>=16 && this->ID<16 && i!=0)
                     {
                         this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
+                        break;
                     }
                 }
             }
@@ -191,17 +225,20 @@ public:
                     else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
                     {
                         this->valid_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
                     }
                     else
                     {
                         if(position[tempy][tempx]<16 && this->ID>=16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                         else if(position[tempy][tempx]>=16 && this->ID<16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                     }
@@ -235,17 +272,20 @@ public:
                     else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
                     {
                         this->valid_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
                     }
                     else
                     {
                         if(position[tempy][tempx]<16 && this->ID>=16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                         else if(position[tempy][tempx]>=16 && this->ID<16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                     }
@@ -277,17 +317,20 @@ public:
                     else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
                     {
                         this->valid_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
                     }
                     else
                     {
                         if(position[tempy][tempx]<16 && this->ID>=16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                         else if(position[tempy][tempx]>=16 && this->ID<16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                     }
@@ -319,17 +362,20 @@ public:
                     else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
                     {
                         this->valid_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
                     }
                     else
                     {
                         if(position[tempy][tempx]<16 && this->ID>=16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                         else if(position[tempy][tempx]>=16 && this->ID<16)
                         {
                             this->scoring_moves.push_back(make_pair(tempx,tempy));
+                            this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                             break;
                         }
                     }
@@ -353,22 +399,26 @@ public:
                 else if(position[tempy][tempx]==-1 && (tempx>=0 && tempy >=0 && tempx<8 && tempy<8 ))
                 {
                     this->valid_moves.push_back(make_pair(tempx,tempy));
+                    this->scores.push_back(make_pair(make_pair(tempx,tempy),0));
                 }
                 else
                 {
                     if(position[tempy][tempx]<16 && this->ID>=16)
                     {
                         this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                         break;
                     }
                     else if(position[tempy][tempx]>=16 && this->ID<16)
                     {
                         this->scoring_moves.push_back(make_pair(tempx,tempy));
+                        this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
                         break;
                     }
                 }
             }
         }
+
 
 
 
