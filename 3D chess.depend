@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1666985833 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1667046709 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -14,6 +14,7 @@
 	<thread>
 	<unistd.h>
 	"BmpLoader.h"
+	"Game.h"
 
 1661781332 c:\program files\codeblocks\mingw\include\gl\glut.h
 	<windows.h>
@@ -27,4 +28,80 @@
 	"BmpLoader.h"
 	<stdio.h>
 	<iostream>
+
+1667046120 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\player.cpp
+	"Player.h"
+
+1667045997 c:\users\eon\documents\codes\graphics lab\3d chess\include\player.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+	<iostream>
+	<bits/stdc++.h>
+	<chrono>
+	<thread>
+	<unistd.h>
+
+1667047011 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\piece.cpp
+	"Piece.h"
+
+1667047333 c:\users\eon\documents\codes\graphics lab\3d chess\include\piece.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+	<iostream>
+	<bits/stdc++.h>
+	<chrono>
+	<thread>
+	<unistd.h>
+	<bits/stdc++.h>
+
+1667046494 c:\users\eon\documents\codes\graphics lab\3d chess\include\game.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+	<iostream>
+	<bits/stdc++.h>
+	<chrono>
+	<thread>
+	<unistd.h>
+	"Board.h"
+
+1667046462 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<stdio.h>
+	<math.h>
+	<time.h>
+	<iostream>
+	<bits/stdc++.h>
+	<chrono>
+	<thread>
+	<unistd.h>
+	"Player.h"
+	"Piece.h"
+
+1667046471 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
+	"Board.h"
+
+1667046494 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\game.cpp
+	"Game.h"
 
