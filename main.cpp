@@ -33,8 +33,13 @@ GLfloat mat_shininess[] = {60};
 
 GLuint ID[]={1,2,3,4,5,6};
 
+int p1_caught=0;
+int p2_caught=0;
+
 GLfloat pos_x[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
 GLfloat pos_y[8] ={-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5};
+//GLfloat scored_lobby_p1[2][16]= {{-6.5,-6.5,-6.5,-6.5,-6.5,-6.5,-6.5,-6.5,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5},{-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5,-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5}};
+//GLfloat scored_lobby_p2[2][16]= {{6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5,7.5},{-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5,-3.5,-2.5,-1.5,-0.5,0.5,1.5,2.5,3.5}};
 GLfloat x_diff[] = {0.55,0.6,0.63,0.7,0.7,0.7,0.8,0.82};
 GLfloat y_diff[] = {0.23,0.25,0.3,0.3,0.35,0.4,0.4,0.45};
 
@@ -70,6 +75,10 @@ static int valid_places[8][8];
 static int scoring_position[8][8];
 static int selected_position[8][8];
 
+
+int id_set_close[16]= {16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
+int id_set_far[16]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+
 double ex=0, ey=0, ez=15, lx=0,ly=0,lz=0, hx=0,hy=1,hz=0;
 
 float wcsClkDn[3],wcsClkUp[3];
@@ -100,6 +109,7 @@ void matColor(float kdr, float kdg, float kdb,  float shiny, int frnt_Back=0, fl
 class Board;
 class Piece;
 class Spot;
+class Player;
 
 
 static void getNormal3p(GLfloat x1, GLfloat y1,GLfloat z1, GLfloat x2, GLfloat y2,GLfloat z2, GLfloat x3, GLfloat y3,GLfloat z3)
@@ -181,6 +191,122 @@ void drawCube(float length,float shine=60)
 
 }
 
+class Player
+{
+private:
+    int player_ID;
+    bool computer;
+    int score;
+    int scored_pieces;
+    int pieces_left;
+    bool win;
+    bool checkmate;
+    bool white;
+    int piece_set[16];
+
+public:
+    Player(int id,bool computer,bool white)
+    {
+        this->player_ID = id;
+        this->computer = computer;
+        this->score=0;
+        this->scored_pieces=0;
+        this->pieces_left=16;
+        this->win =false;
+        this->checkmate= false;
+        this->white = white;
+
+        if(this->computer)
+        {
+            copy(this->piece_set,this->piece_set+16, id_set_far);
+        }
+        else
+        {
+            copy(this->piece_set,this->piece_set+16, id_set_close);
+        }
+    }
+
+    ~Player()
+    {
+        cout<<"Destroyed objects"<<endl;
+    }
+
+    int getID()
+    {
+        return this->player_ID;
+    }
+    void setID(int id)
+    {
+        this->player_ID = id;
+    }
+
+    bool isComputer()
+    {
+        return this->computer;
+    }
+    void setComputer(bool computer )
+    {
+        this->computer = computer;
+    }
+
+    int getScore()
+    {
+        return this->score;
+    }
+    void setScore(int score)
+    {
+        this->score = score;
+        cout<<endl<<"score changed"<<endl;
+    }
+
+    int getScoredPiecesNumber()
+    {
+        return this->scored_pieces;
+    }
+    void setScoredPiecesNumber(int num)
+    {
+        this->scored_pieces = num;
+    }
+
+    int getPiecesLeft()
+    {
+        return this->pieces_left;
+    }
+    void setPiecesLeft(int num)
+    {
+        this->pieces_left = num;
+    }
+
+    bool isWon()
+    {
+        return this->win;
+    }
+    void setWon(bool stat)
+    {
+        this->win = stat;
+    }
+
+    bool isCheckmate()
+    {
+        return this->checkmate;
+    }
+    void setCheckmate(bool stat)
+    {
+        this->checkmate = stat;
+    }
+
+    bool isWhite()
+    {
+        return this->white;
+    }
+    void setWhite(bool stat)
+    {
+        this->white =stat;
+    }
+
+};
+
+
 class Piece
 {
 private:
@@ -195,13 +321,17 @@ private:
     vector<pair<int,int>> valid_moves;
     vector<pair<int,int>> scoring_moves;
     int direction = 1;
+    bool caught;
+    bool computer;
 
 public:
 
-    Piece(int ID,bool white)
+    Piece(int ID,bool white,bool computer)
     {
         this->ID = ID;
         this->white = white;
+        this->caught = false;
+        this->computer = computer;
         if (white)
         {
             this->texture=1;
@@ -597,6 +727,25 @@ public:
 
     }
 
+    bool getCaught()
+    {
+        return this->caught;
+    }
+    void setCaught(bool stat)
+    {
+        this->caught= stat;
+    }
+
+    bool isComputer()
+    {
+        return this->computer;
+    }
+    void setComputer(bool stat)
+    {
+        this->computer = stat;
+    }
+
+
     void drawPawn(GLuint ID)
     {
 
@@ -606,7 +755,17 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
+
+
         glPushMatrix();
         glRotatef(90,1,0,0);
 
@@ -711,7 +870,15 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
         glPushMatrix();
         glRotatef(90,1,0,0);
 
@@ -834,7 +1001,15 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
         glPushMatrix();
 
         glRotatef(90,1,0,0);
@@ -957,7 +1132,15 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
         glPushMatrix();
         glRotatef(90,1,0,0);
 
@@ -1081,7 +1264,15 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
         glPushMatrix();
         glRotatef(90,1,0,0);
 
@@ -1231,7 +1422,15 @@ public:
         glEnable(GL_TEXTURE_GEN_T);
         glBindTexture(GL_TEXTURE_2D,ID);
 
-        glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        if(this->caught)
+        {
+            return;
+
+        }
+        else
+        {
+            glTranslatef(pos_x[this->xindex],1,pos_y[this->yindex]);
+        }
         glPushMatrix();
         glRotatef(90,1,0,0);
 
@@ -1391,6 +1590,9 @@ public:
 
     void draw()
     {
+        if(this->caught)
+            return;
+
         if((this->ID>=8 && this->ID<16) || (this->ID>=16 && this->ID<24))
         {
 
@@ -1511,25 +1713,29 @@ class Board
 {
 private:
     bool white;
+    Player player1 =  Player(1,true,true);
+    Player player2 =  Player(2,false,false);
 
     bool board_filled[8][8] = {{true,true,true,true,true,true,true,true},{true,true,true,true,true,true,true,true},
     {false,false,false,false,false,false,false,false},{false,false,false,false,false,false,false,false},
     {false,false,false,false,false,false,false,false},{false,false,false,false,false,false,false,false},
     {true,true,true,true,true,true,true,true},{true,true,true,true,true,true,true,true}};
 
-    Piece pieces[32] = {  Piece(0,true),Piece(1,true),Piece(2,true),Piece(3,true),
-                        Piece(4,true),Piece(5,true),Piece(6,true),Piece(7,true),
-                        Piece(8,true),Piece(9,true),Piece(10,true),Piece(11,true),
-                        Piece(12,true),Piece(13,true),Piece(14,true),Piece(15,true),
-                        Piece(16,false),Piece(17,false),Piece(18,false),Piece(19,false),
-                        Piece(20,false),Piece(21,false),Piece(22,false),Piece(23,false),
-                        Piece(24,false),Piece(25,false),Piece(26,false),Piece(27,false),
-                        Piece(28,false),Piece(29,false),Piece(30,false),Piece(31,false)};
+    Piece pieces[32] = {  Piece(0,true,true),Piece(1,true,true),Piece(2,true,true),Piece(3,true,true),
+                        Piece(4,true,true),Piece(5,true,true),Piece(6,true,true),Piece(7,true,true),
+                        Piece(8,true,true),Piece(9,true,true),Piece(10,true,true),Piece(11,true,true),
+                        Piece(12,true,true),Piece(13,true,true),Piece(14,true,true),Piece(15,true,true),
+                        Piece(16,false,false),Piece(17,false,false),Piece(18,false,false),Piece(19,false,false),
+                        Piece(20,false,false),Piece(21,false,false),Piece(22,false,false),Piece(23,false,false),
+                        Piece(24,false,false),Piece(25,false,false),Piece(26,false,false),Piece(27,false,false),
+                        Piece(28,false,false),Piece(29,false,false),Piece(30,false,false),Piece(31,false,false)};
 
 public:
 
     Board()
     {
+
+
         int counter= 0;
 
         for (int i=0;i<8;i++)
@@ -1557,6 +1763,18 @@ public:
                     counter++;
                 }
             }
+        }
+    }
+
+    Player& getPlayer(int id)
+    {
+        if(id==1)
+        {
+            return this->player1;
+        }
+        else
+        {
+            return this->player2;
         }
     }
 
@@ -1683,15 +1901,117 @@ public:
         glPopMatrix();
 
     }
+
+    void movePieceOutside(int indx,int indy,int ID)
+    {
+        Piece piece = this->getPiece(ID);
+        GLfloat movx, movy;
+
+        int nowx = piece.getYindex();
+        int nowy = piece.getXindex();
+
+        movx = (indx-nowx)/10;
+        movy = (indy-nowy)/10;
+
+        for(int i=0;i<10;i++)
+        {
+
+            piece.setXindex(nowy+movy);
+            piece.setYindex(nowx+movx);
+            unsigned int microseconds = 500;
+            usleep(microseconds);
+
+        }
+        piece.setXindex(indx);
+        piece.setYindex(indy);
+
+        glPushMatrix();
+        piece.draw();
+        glPopMatrix();
+
+    }
 };
 
 
-Board board;
+class Game
+{
+private:
+    Board board ;
+    Player player1 =  Player(1,true,true);
+    Player player2 =  Player(2,false,false);
+    bool pause ;
+    bool finished ;
+    bool computerWon;
+    bool computerTurn;
+
+
+public:
+    Game()
+    {
+
+        this->pause = false;
+        this->finished =false;
+        this->computerWon = false;
+        this->computerTurn = false;
+
+    }
+
+    Board& getBoard()
+    {
+        return this->board;
+    }
+
+    void setPause(bool stat)
+    {
+        this->pause = stat;
+    }
+
+    bool isPaused()
+    {
+        return this->pause;
+    }
+
+    void setFinished(bool stat)
+    {
+        this->finished = stat;
+    }
+
+    bool isFinished(bool stat)
+    {
+        return this->finished;
+    }
+
+    void setComputerWon(bool stat)
+    {
+        this->computerWon = stat;
+    }
+
+    bool isComputerWon()
+    {
+        return this->computerWon;
+    }
+
+    void changeTurn()
+    {
+        this->computerTurn = !this->computerTurn;
+    }
+
+    bool isComputerTurn()
+    {
+        return this->computerTurn;
+    }
+};
+
+Game game;
+
+//Board board;
 
 stack<Piece>selected;
 
 void calculate_index(GLfloat x, GLfloat y)
 {
+
+
     int xpos = -1,ypos = -1;
 
     for(int j=0;j<8;j++)
@@ -1705,10 +2025,10 @@ void calculate_index(GLfloat x, GLfloat y)
 
     if(ypos==-1)
     {
-        cout<<endl<<"invalid point y"<<endl;
+        //cout<<endl<<"invalid point y"<<endl;
         return;
     }
-    cout<<endl<<ypos<<endl;
+    //cout<<endl<<ypos<<endl;
 
     for (int i=0;i<8;i++)
     {
@@ -1725,12 +2045,12 @@ void calculate_index(GLfloat x, GLfloat y)
 
     if(xpos==-1)
     {
-        cout<<"invalid point"<<endl;
+        //cout<<"invalid point"<<endl;
         return;
     }
     else
     {
-            cout<<endl<<"X: "<<xpos<<"Y: "<<ypos<<endl;
+            //cout<<endl<<"X: "<<xpos<<"Y: "<<ypos<<endl;
     }
 
 
@@ -1756,12 +2076,14 @@ void calculate_index(GLfloat x, GLfloat y)
         if (find(valids.begin(), valids.end(), i) != valids.end())
         {
             selected.pop();
-            board.getPiece(piece.getID()).setSelected(false);
-            board.movePiece(xpos,ypos,piece.getID());
+            game.getBoard().getPiece(piece.getID()).setSelected(false);
+            game.getBoard().movePiece(xpos,ypos,piece.getID());
             position[ypos][xpos] = piece.getID();
             position[piece.getYindex()][piece.getXindex()] = -1;
 
-            cout<<"moved to "<<xpos<<" "<<ypos<<endl;
+            game.changeTurn();
+
+            //cout<<"moved to "<<xpos<<" "<<ypos<<endl;
         }
         else
             return;
@@ -1771,21 +2093,73 @@ void calculate_index(GLfloat x, GLfloat y)
     else if(position[ypos][xpos]!=-1 && !selected.empty())
     {
 
-
-        Piece piece = selected.top();
-        selected.pop();
-
-        if(piece.getXindex()==xpos && piece.getYindex()==ypos)
+        if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.isComputerTurn()))
         {
-            board.getPiece(piece.getID()).setSelected(false);
+            Piece piece = selected.top();
+            selected.pop();
+            piece.resetValidMoves();
+            piece.calculate_valid_moves();
+
+
+
+            vector <pair<int,int>> valids = piece.getValidMoves();
+            vector <pair<int,int>> scores = piece.getScoringMoves();
+            pair<int,int> i = make_pair(xpos,ypos);
+
+            //cout<<"reached 1"<<endl;
+
+            if(piece.getXindex()==xpos && piece.getYindex()==ypos)
+            {
+                game.getBoard().getPiece(piece.getID()).setSelected(false);
+            }
+            else if(find(scores.begin(), scores.end(), i) != scores.end())
+            {
+
+                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                piece2.setCaught(true);
+                if(piece2.isComputer())
+                {
+                    game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
+                    game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
+                    p1_caught++;
+                }
+                else
+                {
+                    game.getBoard().getPlayer(2).setPiecesLeft(game.getBoard().getPlayer(2).getPiecesLeft()-1);
+                    game.getBoard().getPlayer(1).setScore(game.getBoard().getPlayer(1).getScore()+ piece2.getScore());
+                    p2_caught++;
+                }
+
+                cout<<endl<<"Player 1 pieces left "<<game.getBoard().getPlayer(1).getPiecesLeft()<<endl;
+                cout<<endl<<"Player 2 pieces left "<<game.getBoard().getPlayer(2).getPiecesLeft()<<endl;
+
+
+                cout<<endl<<"Player 1 score "<<game.getBoard().getPlayer(1).getScore()<<endl;
+                cout<<endl<<"Player 2 score "<<game.getBoard().getPlayer(2).getScore()<<endl;
+
+
+                //selected.pop();
+                game.getBoard().getPiece(piece.getID()).setSelected(false);
+                game.getBoard().movePiece(xpos,ypos,piece.getID());
+                position[ypos][xpos] = piece.getID();
+                position[piece.getYindex()][piece.getXindex()] = -1;
+
+                game.changeTurn();
+
+
+                //cout<<"reached 2"<<endl;
+
+
+            }
+            else
+            {
+                game.getBoard().getPiece(piece.getID()).setSelected(false);
+                game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
+                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                selected.push(piece2);
+            }
         }
-        else
-        {
-            board.getPiece(piece.getID()).setSelected(false);
-            board.getPiece(position[ypos][xpos]).setSelected(true);
-            Piece piece2 = board.getPiece(position[ypos][xpos]);
-            selected.push(piece2);
-        }
+
 
 
         //cout<<"selected "<<xpos<<" "<<ypos<<endl;
@@ -1793,9 +2167,13 @@ void calculate_index(GLfloat x, GLfloat y)
 
     else if(position[ypos][xpos]!=-1 && selected.empty())
     {
-        board.getPiece(position[ypos][xpos]).setSelected(true);
-        Piece piece2 = board.getPiece(position[ypos][xpos]);
-        selected.push(piece2);
+        if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.isComputerTurn()))
+        {
+            game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
+            Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+            selected.push(piece2);
+
+        }
 
         //cout<<"selected "<<xpos<<" "<<ypos<<endl;
     }
@@ -1848,7 +2226,7 @@ void processMouse(int button, int state, int x, int y)
 
         scsToWcs(clkpt[0].x,clkpt[0].y,wcsClkDn);
         calculate_index(wcsClkDn[0],wcsClkDn[1]);
-        cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl;
+        //cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl;
 
 
     }
@@ -1862,7 +2240,7 @@ void processMouse(int button, int state, int x, int y)
         }
         float wcs[3];
         scsToWcs(clkpt[1].x,clkpt[1].y,wcsClkUp);
-        cout<<"\nU: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkUp[0]<<" "<<wcsClkUp[1]<<" "<<wcsClkUp[2];
+        //cout<<"\nU: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkUp[0]<<" "<<wcsClkUp[1]<<" "<<wcsClkUp[2];
 
         clikd=!clikd;
     }
@@ -1870,16 +2248,16 @@ void processMouse(int button, int state, int x, int y)
 
 
 
-void game()
-{
-
-    //Board board;
-
-    glPushMatrix();
-    board.draw();
-    glPopMatrix();
-
-}
+//void game()
+//{
+//
+//    //Board board;
+//
+//    glPushMatrix();
+//    game.getBoard().draw();
+//    glPopMatrix();
+//
+//}
 
 
 
@@ -2054,7 +2432,7 @@ void display(void)
     //drawQueen(1);
     //drawKing(1);
     //game();
-    board.draw();
+    game.getBoard().draw();
     //initialize();
 
     glPopMatrix();
