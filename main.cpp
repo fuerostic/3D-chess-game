@@ -112,6 +112,7 @@ class Spot;
 class Player;
 
 
+
 static void getNormal3p(GLfloat x1, GLfloat y1,GLfloat z1, GLfloat x2, GLfloat y2,GLfloat z2, GLfloat x3, GLfloat y3,GLfloat z3)
 {
     GLfloat Ux, Uy, Uz, Vx, Vy, Vz, Nx, Ny, Nz;
@@ -2112,7 +2113,68 @@ void calculate_index(GLfloat x, GLfloat y)
             {
                 game.getBoard().getPiece(piece.getID()).setSelected(false);
             }
-            else if(find(scores.begin(), scores.end(), i) != scores.end())
+//            else if(find(scores.begin(), scores.end(), i) != scores.end())
+//            {
+//
+//                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+//                piece2.setCaught(true);
+//                if(piece2.isComputer())
+//                {
+//                    game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
+//                    game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
+//                    p1_caught++;
+//                }
+//                else
+//                {
+//                    game.getBoard().getPlayer(2).setPiecesLeft(game.getBoard().getPlayer(2).getPiecesLeft()-1);
+//                    game.getBoard().getPlayer(1).setScore(game.getBoard().getPlayer(1).getScore()+ piece2.getScore());
+//                    p2_caught++;
+//                }
+//
+//                cout<<endl<<"Player 1 pieces left "<<game.getBoard().getPlayer(1).getPiecesLeft()<<endl;
+//                cout<<endl<<"Player 2 pieces left "<<game.getBoard().getPlayer(2).getPiecesLeft()<<endl;
+//
+//
+//                cout<<endl<<"Player 1 score "<<game.getBoard().getPlayer(1).getScore()<<endl;
+//                cout<<endl<<"Player 2 score "<<game.getBoard().getPlayer(2).getScore()<<endl;
+//
+//
+//                //selected.pop();
+//                game.getBoard().getPiece(piece.getID()).setSelected(false);
+//                game.getBoard().movePiece(xpos,ypos,piece.getID());
+//                position[ypos][xpos] = piece.getID();
+//                position[piece.getYindex()][piece.getXindex()] = -1;
+//
+//                game.changeTurn();
+//
+//
+//                //cout<<"reached 2"<<endl;
+//
+//
+//            }
+            else
+            {
+                game.getBoard().getPiece(piece.getID()).setSelected(false);
+                game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
+                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                selected.push(piece2);
+            }
+        }
+
+        else if((!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.isComputerTurn()) || (game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.isComputerTurn()))
+        {
+            Piece piece = selected.top();
+            selected.pop();
+            piece.resetValidMoves();
+            piece.calculate_valid_moves();
+
+
+
+            vector <pair<int,int>> valids = piece.getValidMoves();
+            vector <pair<int,int>> scores = piece.getScoringMoves();
+            pair<int,int> i = make_pair(xpos,ypos);
+
+            if(find(scores.begin(), scores.end(), i) != scores.end())
             {
 
                 Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
@@ -2153,11 +2215,11 @@ void calculate_index(GLfloat x, GLfloat y)
             }
             else
             {
+//                Piece piece = selected.top();
+//                selected.pop();
                 game.getBoard().getPiece(piece.getID()).setSelected(false);
-                game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
-                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
-                selected.push(piece2);
             }
+
         }
 
 
