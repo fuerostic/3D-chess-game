@@ -1,4 +1,5 @@
-#include "Board.h"
+#include "../include/Board.h"
+#include "../utils.h"
 
 
 extern int evaluate(Board board, bool computerIsMax)
@@ -20,7 +21,7 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
         return make_pair(make_pair(make_pair(-1,-1), make_pair(-1,-1)),evaluate(board,isComputerMax));
     }
 
-    vector<pair< pair<int,int>,pair<int,int> >> moves = board.get_all_moves();
+    vector<pair< pair<int,int>,pair<int,int> >> moves =calculate_all_valid_moves(board);
     pair< pair<int,int>,pair<int,int> > best_move = moves[0];
 
 

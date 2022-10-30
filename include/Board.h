@@ -99,6 +99,18 @@ public:
         return this->selected;
     }
 
+    vector <Piece> getPieces()
+    {
+        vector <Piece> p;
+
+        for(int i=0;i<32;i++)
+        {
+            p.push_back(pieces[i]);
+        }
+
+        return p;
+    }
+
     vector<vector<int>> getPosition()
     {
         vector<vector<int>> v;
@@ -474,9 +486,18 @@ public:
 //        if()
         if(computerTurn)
         {
-            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),1,true,-100,100);
+            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),3,true,-100,100);
 
-            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<< position[best_move.first.first.second][best_move.first.first.first]<< " " <<best_move.first.first.second<< " " <<best_move.first.first.first <<endl;
+            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<< position[best_move.first.first.first][best_move.first.first.second]<< " " <<best_move.first.first.second<< " " <<best_move.first.first.first <<endl;
+
+            for(int i=0;i<8;i++)
+            {
+                for(int j=0;j<8;j++)
+                {
+                    cout<<position[i][j]<<" ";
+                }
+                cout<<endl;
+            }
 
             this->movePiece(best_move.first.second.second,best_move.first.second.first,position[best_move.first.first.second][best_move.first.first.first]);
             this->computerTurn = !this->computerTurn;

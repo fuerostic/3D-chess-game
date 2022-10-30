@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667144452 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1667145426 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -82,7 +82,7 @@
 	<unistd.h>
 	"Board.h"
 
-1667145342 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
+1667147078 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -99,9 +99,14 @@
 	"Player.h"
 	"Piece.h"
 
-1667141518 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
-	"Board.h"
+1667145972 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
+	"../include/Board.h"
+	"../utils.h"
 
 1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\game.cpp
 	"Game.h"
+
+1667145918 c:\users\eon\documents\codes\graphics lab\3d chess\utils.h
+	"include/Board.h"
+	"include/Piece.h"
 

@@ -1,9 +1,10 @@
+#include "include/Board.h"
+#include "include/Piece.h"
 
 
 
 
-
-vector<pair<pair<int,int>,pair<int,int> > > calculate_valid_moves(Board board)
+vector<pair<pair<int,int>,pair<int,int> > > calculate_all_valid_moves(Board board)
 {
     const int king_moves[2][8] = {{0,0,1,1,1,-1,-1,-1},{1,-1,0,1,-1,0,1,-1}};
     const int queen_moves[2][8] = {{0,0,1,1,1,-1,-1,-1},{1,-1,0,1,-1,0,1,-1}};
@@ -14,10 +15,25 @@ vector<pair<pair<int,int>,pair<int,int> > > calculate_valid_moves(Board board)
 
     vector<Piece> pieces = board.getPieces();
     vector<pair<pair<int,int>,pair<int,int> > >scores;
-    vector<vector<int>> = board.getPosition();
+    vector<vector<int>>pos = board.getPosition();
+
+
+    for(int i=0;i<8;i++)
+    {
+        for(int j=0;j<8;j++)
+        {
+            if(pos[i][j]!=-1)
+            {
+                pieces[pos[i][j]].setXindex(i);
+                pieces[pos[i][j]].setXindex(j);
+            }
+        }
+    }
+
 
     for(Piece piece: pieces)
     {
+
         int tempx;
         int tempy;
 
