@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667145426 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1667149119 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -32,7 +32,7 @@
 1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\player.cpp
 	"Player.h"
 
-1667075456 c:\users\eon\documents\codes\graphics lab\3d chess\include\player.h
+1667149672 c:\users\eon\documents\codes\graphics lab\3d chess\include\player.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -82,7 +82,7 @@
 	<unistd.h>
 	"Board.h"
 
-1667147078 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
+1667157365 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -99,14 +99,19 @@
 	"Player.h"
 	"Piece.h"
 
-1667145972 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
+1667157365 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
 	"../include/Board.h"
 	"../utils.h"
+	"random"
 
 1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\game.cpp
 	"Game.h"
 
-1667145918 c:\users\eon\documents\codes\graphics lab\3d chess\utils.h
+1667157406 c:\users\eon\documents\codes\graphics lab\3d chess\utils.h
 	"include/Board.h"
 	"include/Piece.h"
+	"include/Game.h"
+
+1667157365 source:c:\users\eon\documents\codes\graphics lab\3d chess\utils.cpp
+	"utils.h"
 

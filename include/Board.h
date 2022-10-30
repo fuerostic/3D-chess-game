@@ -132,6 +132,18 @@ public:
     }
 
 
+    void setPosition(vector<vector<int>> p)
+    {
+        for(int i=0;i<8;i++)
+        {
+            for(int j=0;j<8;j++)
+            {
+                this->pos[i][j] = p[i][j];
+            }
+        }
+    }
+
+
     void updatePosition()
     {
         memcpy(this->pos, position, sizeof(this->pos));
@@ -197,12 +209,45 @@ public:
 
     Board make_move(pair<int,int>i , pair <int,int>j,Board board)
     {
-        int id = board.pos[i.second][i.first];
-        Piece piece = board.getPiece(id);
-        board.pos[i.second][i.first] = -1;
-        board.pos[j.second][j.first] = id;
-        piece.setXindex(j.first);
-        piece.setYindex(j.second);
+        vector<vector<int>> pos = board.getPosition();
+        int id1 = pos[j.second][j.first];
+        int id2 = pos[i.second][i.first];
+        Piece piece = board.getPiece(id1);
+
+
+        if(id2!=-1)
+        {
+            Piece piece2 = board.getPiece(id2);
+
+            if((id2>=0 && id2<16 && id1>15) )
+            {
+                board.getPlayer(2).setScore(board.getPlayer(2).getScore()+ piece2.getScore());
+                board.getPlayer(2).setScoredPiecesNumber(board.getPlayer(2).getScoredPiecesNumber()+1);
+                board.getPlayer(1).setPiecesLeft(board.getPlayer(1).getPiecesLeft()-1);
+
+            }
+            else if((id2>=16 && id2<32 && id1>=0 && id1<16))
+            {
+                board.getPlayer(2).setScore(board.getPlayer(2).getScore()+ piece2.getScore());
+                board.getPlayer(2).setScoredPiecesNumber(board.getPlayer(2).getScoredPiecesNumber()+1);
+                board.getPlayer(1).setPiecesLeft(board.getPlayer(1).getPiecesLeft()-1);
+            }
+            board.getPiece(id2).setCaught(true);
+            pos[i.second][i.first] = id1;
+            pos[j.second][j.first] = -1;
+            piece.setXindex(i.first);
+            piece.setYindex(i.second);
+
+        }
+        else
+        {
+            pos[i.second][i.first] = id1;
+            pos[j.second][j.first] = -1;
+            piece.setXindex(i.first);
+            piece.setYindex(i.second);
+        }
+
+        board.setPosition(pos);
 
         return board;
 
@@ -486,9 +531,12 @@ public:
 //        if()
         if(computerTurn)
         {
-            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),3,true,-100,100);
+            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),3,true,-INFINITE,INFINITE);
 
-            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<< position[best_move.first.first.first][best_move.first.first.second]<< " " <<best_move.first.first.second<< " " <<best_move.first.first.first <<endl;
+            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<< position[best_move.first.second.first][best_move.first.second.second]<< " " <<best_move.first.first.second<< " " <<best_move.first.first.first <<endl;
+
+
+            this->moveAiPiece(position[best_move.first.second.second][best_move.first.second.first],best_move.first.first);
 
             for(int i=0;i<8;i++)
             {
@@ -499,11 +547,13 @@ public:
                 cout<<endl;
             }
 
-            this->movePiece(best_move.first.second.second,best_move.first.second.first,position[best_move.first.first.second][best_move.first.first.first]);
+
             this->computerTurn = !this->computerTurn;
         }
 
     }
+
+
 
 
 
@@ -637,6 +687,55 @@ public:
         glPopMatrix();
 
     }
+
+
+    void moveAiPiece(int ID,pair<int,int>to)
+    {
+        Piece piece = this->getPiece(ID);
+
+
+        if(position[to.first][to.second]!=-1)
+        {
+            Piece piece2 = this->getPiece(position[to.first][to.second]);
+            if(position[to.second][to.first]<16)
+            {
+                this->player2.setScore(this->player2.getScore()+piece2.getScore() );
+                this->player2.setScoredPiecesNumber(this->player2.getScoredPiecesNumber()+1);
+                this->player1.setPiecesLeft(this->player1.getPiecesLeft()-1);
+            }
+            else
+            {
+                this->player1.setScore(this->player1.getScore()+piece2.getScore() );
+                this->player1.setScoredPiecesNumber(this->player1.getScoredPiecesNumber()+1);
+                this->player2.setPiecesLeft(this->player2.getPiecesLeft()-1);
+            }
+
+            this->getPiece(position[to.first][to.second]).setCaught(true);
+        }
+
+        GLfloat movx, movy;
+
+        int nowx = piece.getYindex();
+        int nowy = piece.getXindex();
+
+        piece.setXindex(to.first);
+        piece.setYindex(to.second);
+
+        position[to.second][to.first] = ID;
+        pos[to.second][to.first] = ID;
+
+        position[nowx][nowy] = -1;
+        pos[nowx][nowy] = -1;
+
+
+
+        glPushMatrix();
+        piece.draw();
+        glPopMatrix();
+
+
+    }
+
 
     void movePieceOutspiece(int indx,int indy,int ID)
     {

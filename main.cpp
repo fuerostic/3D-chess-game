@@ -352,21 +352,9 @@ void calculate_index(GLfloat x, GLfloat y)
 
         }
 
-        //cout<<"selected "<<xpos<<" "<<ypos<<endl;
-    }
-
-//    for(int i=0;i<8;i++)
-//    {
-//        for(int j=0;j<8;j++)
-//        {
-//            cout<<position[i][j]<<" " ;
-//        }
-//        cout<<endl;
-//    }
-
-
     game.getBoard().updatePosition();
 
+}
 }
 
 void scsToWcs(float sx,float sy, float wcsv[3] )

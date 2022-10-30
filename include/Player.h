@@ -38,7 +38,7 @@ public:
     Player(int id,bool computer,bool white);
     ~Player()
     {
-        cout<<"Destroyed objects"<<endl;
+        //cout<<"Destroyed objects"<<endl;
     }
 
 
