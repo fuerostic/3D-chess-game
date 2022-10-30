@@ -14,8 +14,7 @@ vector<pair<pair<int,int>,pair<int,int> > > calculate_valid_moves(Board board)
 
     vector<Piece> pieces = board.getPieces();
     vector<pair<pair<int,int>,pair<int,int> > >scores;
-    vector<vector<int>> pos = board.getPosition();
-
+    vector<vector<int>> = board.getPosition();
 
     for(Piece piece: pieces)
     {

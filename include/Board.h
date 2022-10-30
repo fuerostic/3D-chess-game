@@ -82,6 +82,7 @@ public:
                 {
                     selected_position[i][j] = 0;
                     position[i][j] = counter;
+                    pos[i][j] = counter;
                     //cout<< pieces[counter].getXindex()<<" "<<pieces[counter].getYindex() <<endl;
                     counter++;
                 }
@@ -97,6 +98,33 @@ public:
     {
         return this->selected;
     }
+
+    vector<vector<int>> getPosition()
+    {
+        vector<vector<int>> v;
+
+        for(int i=0;i<8;i++)
+        {
+            vector<int>r(8) ;
+
+            for(int j=0;j<8;j++)
+            {
+                r[j] = (this->pos[i][j]);
+            }
+
+            v.push_back(r);
+        }
+
+
+        return v;
+    }
+
+
+    void updatePosition()
+    {
+        memcpy(this->pos, position, sizeof(this->pos));
+    }
+
 
     Player& getPlayer(int ID)
     {
