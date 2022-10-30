@@ -12,7 +12,7 @@
 #include <thread>
 #include <unistd.h>
 #include "BmpLoader.h"
-#include "Game.h"
+#include "include/Game.h"
 
 using namespace std;
 
@@ -627,7 +627,7 @@ int main (int argc, char **argv)
     glEnable(GL_NORMALIZE);
     glEnable(GL_LIGHTING);
 
-    Board board;
+    //Board board;
 
     light();
 

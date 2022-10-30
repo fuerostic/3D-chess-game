@@ -29,7 +29,7 @@
 	<stdio.h>
 	<iostream>
 
-1667046120 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\player.cpp
+1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\player.cpp
 	"Player.h"
 
 1667075456 c:\users\eon\documents\codes\graphics lab\3d chess\include\player.h
@@ -47,7 +47,7 @@
 	<thread>
 	<unistd.h>
 
-1667057195 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\piece.cpp
+1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\piece.cpp
 	"Piece.h"
 
 1667065092 c:\users\eon\documents\codes\graphics lab\3d chess\include\piece.h
@@ -99,9 +99,9 @@
 	"Player.h"
 	"Piece.h"
 
-1667075888 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
+1667141518 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\board.cpp
 	"Board.h"
 
-1667046494 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\game.cpp
+1667142457 source:c:\users\eon\documents\codes\graphics lab\3d chess\src\game.cpp
 	"Game.h"
 
