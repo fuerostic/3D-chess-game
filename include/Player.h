@@ -68,7 +68,7 @@ public:
     void setScore(int score)
     {
         this->score = score;
-        cout<<endl<<"score changed"<<endl;
+        cout<<endl<<"score changed: id:"<<this->player_ID<<" score "<<this->score<<endl;
     }
 
     int getScoredPiecesNumber()

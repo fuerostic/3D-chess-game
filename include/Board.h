@@ -182,7 +182,7 @@ public:
 //        }
 //    }
 
-    Board& getSelf()
+    Board getSelf()
     {
         return *this;
     }
@@ -531,9 +531,9 @@ public:
 //        if()
         if(computerTurn)
         {
-            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),3,true,-INFINITE,INFINITE);
+            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),5,true,-INFINITE,INFINITE);
 
-            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<< position[best_move.first.second.first][best_move.first.second.second]<< " " <<best_move.first.first.second<< " " <<best_move.first.first.first <<endl;
+            cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<<position[best_move.first.second.second][best_move.first.second.first]<< " " <<best_move.first.first.first<< " " <<best_move.first.first.second <<endl;
 
 
             this->moveAiPiece(position[best_move.first.second.second][best_move.first.second.first],best_move.first.first);
@@ -550,6 +550,12 @@ public:
 
             this->computerTurn = !this->computerTurn;
         }
+
+
+
+
+
+
 
     }
 

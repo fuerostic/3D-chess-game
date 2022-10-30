@@ -1,6 +1,11 @@
 #include "utils.h"
 
 
+
+
+
+
+
 vector<pair<pair<int,int>,pair<int,int> > > calculate_all_valid_moves(Board board,bool stat)
 {
     const int king_moves[2][8] = {{0,0,1,1,1,-1,-1,-1},{1,-1,0,1,-1,0,1,-1}};
@@ -52,7 +57,7 @@ vector<pair<pair<int,int>,pair<int,int> > > calculate_all_valid_moves(Board boar
                 tempy = piece.getYindex() + (piece.getDirection() * pawn_moves[1][i]);
 
 
-                if ((tempx<0 || tempy <0 || tempx>8 || tempy>8 || (pos[tempy][tempx]<16  && pos[tempy][tempx]!=-1  && piece.getID()<16) || (pos[tempy][tempx]>=16 && piece.getID()>=16)) && pos[tempy][tempx]!=-1 )
+                if ((tempx<0 || tempy <0 || tempx>7 || tempy>7 || (pos[tempy][tempx]<16  && pos[tempy][tempx]!=-1  && piece.getID()<16) || (pos[tempy][tempx]>=16 && piece.getID()>=16)) && pos[tempy][tempx]!=-1 )
                 {
                     break;
                 }
