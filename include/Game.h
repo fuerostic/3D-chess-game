@@ -27,7 +27,7 @@ private:
     bool started;
     bool finished ;
     bool computerWon;
-
+    bool blitz;
 
 
 
@@ -38,6 +38,7 @@ public:
         this->started= false;
         this->finished =true;
         this->computerWon = false;
+        this->blitz = false;
 
     }
 
@@ -89,6 +90,16 @@ public:
     Board& getBoard()
     {
         return this->board;
+    }
+
+    void setBlitz(bool stat)
+    {
+        this->blitz = stat;
+    }
+
+    bool isBlitz()
+    {
+        return this->blitz;
     }
 
     void setPause(bool stat)

@@ -161,8 +161,9 @@ void calculate_index(GLfloat x, GLfloat y)
                 game.setStarted(true);
                 game.setPause(false);
                 game.setFinished(false);
+                game.setBlitz(true);
 
-
+                seconds = 0;
 
                 cout<<"blitz"<<endl;
             }
@@ -683,8 +684,16 @@ void display(void)
     //seconds+=time_span.count()+0.3;
     seconds+=0.20;
     sleep(.5);
-    cout<<seconds<<endl;
+    //cout<<seconds<<endl;
     game.getBoard().setSeconds((int)seconds);
+
+
+    if(game.isBlitz() && seconds>=180)
+    {
+        game.setStarted(false);
+        game.setPause(true);
+        game.setFinished(true);
+    }
 
     if(game.isStarted())
     {
@@ -694,15 +703,20 @@ void display(void)
     {
         game.getBoard().drawPauseMenuCard();
     }
-    else if(game.isFinished() && game.isPaused())
+    else if((game.isFinished() && game.isPaused())|| (seconds>=180 && game.isBlitz()))
     {
-        if(game.isComputerWon())
+        if(game.isComputerWon() || (game.getBoard().getPlayer(1).getScore()> game.getBoard().getPlayer(2).getScore() && game.isBlitz()))
         {
             game.getBoard().drawWinnerCard(27);
         }
-        else
+        else if((!game.isComputerWon() && !game.isBlitz()) || (game.getBoard().getPlayer(2).getScore()> game.getBoard().getPlayer(1).getScore() && game.isBlitz()))
         {
             game.getBoard().drawWinnerCard(28);
+            cout<<game.getBoard().getPlayer(2).getScore()<<endl;
+        }
+        else
+        {
+            game.getBoard().drawWinnerCard(29);
         }
     }
     else if(game.isFinished() || (!game.isStarted() && !game.isPaused()))
