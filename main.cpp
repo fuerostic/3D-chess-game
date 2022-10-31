@@ -13,7 +13,8 @@
 #include <unistd.h>
 #include "BmpLoader.h"
 #include "include/Game.h"
-
+# include <conio.h>
+# include <dos.h>
 using namespace std;
 
 
@@ -32,7 +33,7 @@ GLfloat x=0,y=0,z=0,roll=0,pitch=0, yaw=0,eyex= 0,eyey=10,eyez=7,dx=0,dy=0,dz=0,
 //GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 //GLfloat mat_shininess[] = {60};
 
-GLuint ID[]= {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29};
+GLuint ID[]= {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
 
 int p1_caught=0;
 int p2_caught=0;
@@ -105,6 +106,9 @@ class Piece;
 class Spot;
 class Player;
 
+static double seconds=0;
+static double stored_sec = 0;
+chrono::steady_clock sc;
 
 void textDisplay( int x, int y, char *st)
 {
@@ -150,12 +154,15 @@ void calculate_index(GLfloat x, GLfloat y)
                 game.setFinished(false);
 
                 cout<<"play"<<endl;
+                seconds =0;
             }
             else if(y<=y_cords[2] && y>y_cords[3])
             {
                 game.setStarted(true);
                 game.setPause(false);
                 game.setFinished(false);
+
+
 
                 cout<<"blitz"<<endl;
             }
@@ -184,6 +191,8 @@ void calculate_index(GLfloat x, GLfloat y)
             game.setStarted(true);
             game.setPause(false);
             game.setFinished(false);
+
+            seconds = stored_sec;
         }
         else if(y<=y_cords[2] && y>y_cords[3])
         {
@@ -551,6 +560,7 @@ void myKeyboardFunc( unsigned char key, int x, int y )
         {
             game.setPause(true);
             game.setStarted(false);
+            stored_sec = seconds;
         }
         else
         {
@@ -620,7 +630,7 @@ void light()
 
 void display(void)
 {
-
+    auto start = sc.now();     // start timer
     glClearColor(0.75,0.78,0.815,0.7);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -668,8 +678,13 @@ void display(void)
     //game.getBoard().drawPauseMenuCard();
     //game.getBoard().drawWinnerCard(27);
     //initialize();
-
-
+    auto ende = sc.now();       // end timer (starting & ending is done by measuring the time at the moment the process started & ended respectively)
+    auto time_span = static_cast<chrono::duration<double>>(ende - start);   // measure time span between start & end
+    //seconds+=time_span.count()+0.3;
+    seconds+=0.20;
+    sleep(.5);
+    cout<<seconds<<endl;
+    game.getBoard().setSeconds((int)seconds);
 
     if(game.isStarted())
     {

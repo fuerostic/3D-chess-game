@@ -23,7 +23,7 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
 class Board
 {
 private:
-
+    int seconds;
     bool white;
     bool gameOver;
     bool computerWon;
@@ -57,11 +57,12 @@ private:
 //    map<int,vector<pair<pair<int,int>,int>>> all_moves;
 
 public:
+    //int time;
 
     Board()
     {
 
-
+        int seconds =0;
         int counter= 0;
 
         for (int i=0; i<8; i++)
@@ -98,6 +99,16 @@ public:
 
     }
 
+
+    int getSeconds()
+    {
+        return this->seconds;
+    }
+
+    void setSeconds(int second)
+    {
+        this->seconds = second;
+    }
     stack<Piece>& getSelected()
     {
         return this->selected;
@@ -828,6 +839,8 @@ public:
     {
         int ai_score[3]= {0,0,0};
         int human_score[3]= {0,0,0};
+        int minuten[2] = {0,0};
+        int seconden[2] = {0,0};
 
 //        cout<<this->getPlayer(1).getScore()<<endl;
 //        cout<<this->getPlayer(3).getScore()<<endl;
@@ -835,23 +848,42 @@ public:
         int num1=this->getPlayer(1).getScore();
         int num2= this->getPlayer(2).getScore();
 
-        int counter=2;
+        int counter=3;
         while(num1!=0)
         {
-            ai_score[counter] = num1%10;
+            ai_score[counter-1] = num1%10;
             num1/=10;
             counter--;
         }
 
-        counter=2;
+        counter=3;
         while(num2!=0)
         {
-            human_score[counter] = num2%10;
+            human_score[counter-1] = num2%10;
             num2/=10;
             counter--;
         }
 
+        int m = this->seconds/60;
+        int s = this->seconds-(m*60);
 
+
+        counter =2;
+        while(m!=0)
+        {
+            minuten[counter-1] = m%10;
+            m/=10;
+            counter--;
+        }
+
+
+        counter=2;
+        while(s!=0)
+        {
+            seconden[counter-1] = s%10;
+            s/=10;
+            counter--;
+        }
 
 
         glEnable(GL_TEXTURE_2D);
@@ -859,7 +891,7 @@ public:
         glBindTexture(GL_TEXTURE_2D,6);
         glTranslatef(-8,6.5,-7);
         glRotatef(40,1,0,0);
-        glScalef(16,.2,5);
+        glScalef(16,.2,4.7);
         drawCube(1);
         glPopMatrix();
         glDisable(GL_TEXTURE_2D);
@@ -958,6 +990,70 @@ public:
         drawCube(1);
         glPopMatrix();
         glDisable(GL_TEXTURE_2D);
+
+
+
+
+
+
+        //Time
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[minuten[0]]);
+        glTranslatef(-1.25,6,-5);
+        glRotatef(40,1,0,0);
+        glScalef(.5,.2,.5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[minuten[1]]);
+        glTranslatef(-.75,6,-5);
+        glRotatef(40,1,0,0);
+        glScalef(.5,.2,.5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,30);
+        glTranslatef(-0.25,6,-5);
+        glRotatef(40,1,0,0);
+        glScalef(.5,.2,.5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[seconden[0]]);
+        glTranslatef(0.25,6,-5);
+        glRotatef(40,1,0,0);
+        glScalef(.5,.2,.5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[seconden[1]]);
+        glTranslatef(0.75,6,-5);
+        glRotatef(40,1,0,0);
+        glScalef(.5,.2,.5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+
+
 
 
 

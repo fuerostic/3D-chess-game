@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1667245813 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
+1667248212 source:c:\users\eon\documents\codes\graphics lab\3d chess\main.cpp
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -82,7 +82,7 @@
 	<unistd.h>
 	"Board.h"
 
-1667245863 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
+1667250383 c:\users\eon\documents\codes\graphics lab\3d chess\include\board.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
