@@ -23,8 +23,10 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
 class Board
 {
 private:
+
     bool white;
     bool gameOver;
+    bool computerWon;
     bool computerTurn;
     int num[10]={10,11,12,13,14,15,16,17,18,19};
     stack<Piece>selected;
@@ -73,7 +75,7 @@ public:
                 selected_position[i][j] = -1;
             }
         }
-
+        bool computerWon = false;
         bool white = true;
 
         for( int i=0; i<8; i++)
@@ -164,25 +166,6 @@ public:
         }
     }
 
-//    void calculate_best_move_of_ai()
-//    {
-//        for(int i=0;i<16;i++)
-//        {
-//            if(pieces[i].getCaught())
-//            {
-//                continue;
-//            }
-//
-//            pieces[i].resetValidMoves();
-//            pieces[i].calculate_valid_moves();
-////            vector<int,int> valpiece.getID()_moves= pieces[i].getValpiece.getID()Moves();
-////            vector<int,int> scoring_moves = pieces[i].getScoringMoves();
-//            vector<pair<pair<int,int>,int> > scores = pieces[i].getAllScores();
-//
-//            this->all_moves.insert(make_pair(i,scores));
-//
-//        }
-//    }
 
     Board getSelf()
     {
@@ -204,10 +187,30 @@ public:
         return this->all_moves;
     }
 
+
+    bool isComputerWon()
+    {
+        return this->computerWon;
+    }
+
     bool isGameOver()
     {
+
+        if(this->getPiece(4).getCaught()==true || this->getPlayer(1).getPiecesLeft()==0)
+        {
+            this->gameOver=true;
+            this->computerWon = false;
+        }
+        else if(this->getPiece(28).getCaught()==true || this->getPlayer(2).getPiecesLeft()==0)
+        {
+            this->gameOver=true;
+            this->computerWon = true;
+        }
+
+        //cout<<"gameover"<<endl ;
         return this->gameOver;
     }
+
 
     Board make_move(pair<int,int>i , pair <int,int>j,Board board)
     {
@@ -581,6 +584,151 @@ public:
         return this->computerTurn;
     }
 
+    void drawMenuCard()
+    {
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,20);
+        glTranslatef(-5,5,-3);
+        glRotatef(35,1,0,0);
+        glScalef(10,1,10);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //title
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,21);
+        glTranslatef(-2,4.8,-2);
+        glRotatef(35,1,0,0);
+        glScalef(4,1,4);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //buttons : PLAY
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,22);
+        glTranslatef(-1.5,2,1.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //button blitz
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,25);
+        glTranslatef(-1.5,1.2,2.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //button exit
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,23);
+        glTranslatef(-1.5,.5,3.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+
+
+
+    }
+
+
+    void drawPauseMenuCard()
+    {
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,20);
+        glTranslatef(-5,5,-3);
+        glRotatef(35,1,0,0);
+        glScalef(10,1,10);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //title
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,21);
+        glTranslatef(-2,4.8,-2);
+        glRotatef(35,1,0,0);
+        glScalef(4,1,4);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //buttons : Resume
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,24);
+        glTranslatef(-1.5,2,1.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //button Main menu
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,26);
+        glTranslatef(-1.5,1.2,2.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //button exit
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,23);
+        glTranslatef(-1.5,.5,3.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,1);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+    }
+
+
     void drawBoard()
     {
         glEnable(GL_TEXTURE_2D);
@@ -602,8 +750,8 @@ public:
         int ai_score[3]= {0,0,0};
         int human_score[3]= {0,0,0};
 
-        cout<<this->getPlayer(1).getScore()<<endl;
-        cout<<this->getPlayer(3).getScore()<<endl;
+//        cout<<this->getPlayer(1).getScore()<<endl;
+//        cout<<this->getPlayer(3).getScore()<<endl;
 
         int num1=this->getPlayer(1).getScore();
         int num2= this->getPlayer(2).getScore();
@@ -871,6 +1019,7 @@ public:
                 this->player1.setScore(this->player1.getScore()+piece2.getScore() );
                 this->player1.setScoredPiecesNumber(this->player1.getScoredPiecesNumber()+1);
                 this->player2.setPiecesLeft(this->player2.getPiecesLeft()-1);
+
             }
 
             this->getPiece(position[to.first][to.second]).setCaught(true);

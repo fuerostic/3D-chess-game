@@ -32,7 +32,7 @@ GLfloat x=0,y=0,z=0,roll=0,pitch=0, yaw=0,eyex= 0,eyey=10,eyez=7,dx=0,dy=0,dz=0,
 //GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 //GLfloat mat_shininess[] = {60};
 
-GLuint ID[]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
+GLuint ID[]= {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26};
 
 int p1_caught=0;
 int p2_caught=0;
@@ -62,6 +62,8 @@ const int ntheta = 20;
 
 
 
+GLfloat x_cords[] = {-1.38,1.38};
+GLfloat y_cords[] = {2.7,2.1,2.0,1.48,1.38,0.8};
 
 //
 //static int position[8][8];
@@ -127,107 +129,181 @@ Game game;
 void calculate_index(GLfloat x, GLfloat y)
 {
 
+    cout<<"here "<<endl;;
 
-    int xpos = -1,ypos = -1;
 
-    for(int j=0;j<8;j++)
+    if(!game.isStarted() && !game.isPaused())
     {
-        if(y>=y_start_points[j+1] && y<y_start_points[j])
+
+        cout<<"here 1"<<endl;
+
+
+        if(x>=x_cords[0] && x<x_cords[1])
         {
-            ypos=j;
-            break;
+
+            cout<<"here 2"<<endl;
+            if(y<=y_cords[0] && y>y_cords[1])
+            {
+                game.setStarted(true);
+                game.setPause(false);
+                game.setFinished(false);
+
+                cout<<"play"<<endl;
+            }
+            else if(y<=y_cords[2] && y>y_cords[3])
+            {
+                game.setStarted(true);
+                game.setPause(false);
+                game.setFinished(false);
+
+                cout<<"blitz"<<endl;
+            }
+            else if(y<=y_cords[4] && y>y_cords[5])
+            {
+                game.setStarted(false);
+                game.setPause(false);
+                game.setFinished(false);
+
+                cout<<"exit"<<endl;
+
+                exit(1);
+            }
+
+
         }
     }
 
-    if(ypos==-1)
+    else if(game.isPaused())
     {
-        //cout<<endl<<"invalid point y"<<endl;
-        return;
-    }
-    //cout<<endl<<ypos<<endl;
+        cout<<"here 3"<<endl;
 
-    for (int i=0;i<8;i++)
+            if(y<=y_cords[0] && y>y_cords[1])
+            {
+                game.setStarted(true);
+                game.setPause(false);
+                game.setFinished(false);
+            }
+            else if(y<=y_cords[2] && y>y_cords[3])
+            {
+                game.setStarted(false);
+                game.setPause(false);
+                game.setFinished(true);
+            }
+            else if(y<=y_cords[4] && y>y_cords[5])
+            {
+                game.setStarted(false);
+                game.setPause(false);
+                game.setFinished(false);
+
+                exit(1);
+            }
+    }
+
+    else if(game.isStarted())
     {
-        if(x>= (x_start_points[ypos]+ (i*x_diff[ypos])) && x<(x_start_points[ypos]+ ((i+1)*x_diff[ypos])))
+
+        cout<<"here 4"<<endl;
+
+        int xpos = -1,ypos = -1;
+
+        for(int j=0; j<8; j++)
         {
-            //cout<<x<<endl;
-            xpos= i;
+            if(y>=y_start_points[j+1] && y<y_start_points[j])
+            {
+                ypos=j;
+                break;
+            }
         }
 
-        //cout<<endl<<(x_start_points[ypos]+ (i*x_diff[ypos]))<<" " <<(x_start_points[ypos]+ ((i+1)*x_diff[ypos])) <<endl;
-    }
+        if(ypos==-1)
+        {
+            //cout<<endl<<"invalid point y"<<endl;
+            return;
+        }
+        //cout<<endl<<ypos<<endl;
+
+        for (int i=0; i<8; i++)
+        {
+            if(x>= (x_start_points[ypos]+ (i*x_diff[ypos])) && x<(x_start_points[ypos]+ ((i+1)*x_diff[ypos])))
+            {
+                //cout<<x<<endl;
+                xpos= i;
+            }
+
+            //cout<<endl<<(x_start_points[ypos]+ (i*x_diff[ypos]))<<" " <<(x_start_points[ypos]+ ((i+1)*x_diff[ypos])) <<endl;
+        }
 
 
 
-    if(xpos==-1)
-    {
-        //cout<<"invalid point"<<endl;
-        return;
-    }
-    else
-    {
+        if(xpos==-1)
+        {
+            //cout<<"invalid point"<<endl;
+            return;
+        }
+        else
+        {
             //cout<<endl<<"X: "<<xpos<<"Y: "<<ypos<<endl;
-    }
+        }
 
 
-    if(position[ypos][xpos]==-1 && !game.getBoard().getSelected().empty())
-    {
-        Piece piece = game.getBoard().getSelected().top();
+        if(position[ypos][xpos]==-1 && !game.getBoard().getSelected().empty())
+        {
+            Piece piece = game.getBoard().getSelected().top();
 
-        piece.resetValidMoves();
-        piece.calculate_valid_moves();
+            piece.resetValidMoves();
+            piece.calculate_valid_moves();
 
-        vector <pair<int,int>> valids = piece.getValidMoves();
-        vector <pair<int,int>> scores = piece.getScoringMoves();
+            vector <pair<int,int>> valids = piece.getValidMoves();
+            vector <pair<int,int>> scores = piece.getScoringMoves();
 
-        pair<int,int> i = make_pair(xpos,ypos);
+            pair<int,int> i = make_pair(xpos,ypos);
 
-        //cout<<"move on : " <<i.first <<" "<<i.second<<endl;
-        //cout<<"valids"<<endl;
+            //cout<<"move on : " <<i.first <<" "<<i.second<<endl;
+            //cout<<"valids"<<endl;
 //        for(pair<int,int> j: valids)
 //        {
 //            cout<< j.first<<" "<<j.second<<endl;
 //        }
 
-        if (find(valids.begin(), valids.end(), i) != valids.end())
-        {
-            game.getBoard().getSelected().pop();
-            game.getBoard().getPiece(piece.getID()).setSelected(false);
-            game.getBoard().movePiece(xpos,ypos,piece.getID());
-            position[ypos][xpos] = piece.getID();
-            position[piece.getYindex()][piece.getXindex()] = -1;
-
-            game.getBoard().changeTurn();
-
-            //cout<<"moved to "<<xpos<<" "<<ypos<<endl;
-        }
-        else
-            return;
-
-
-    }
-    else if(position[ypos][xpos]!=-1 && !game.getBoard().getSelected().empty())
-    {
-
-        if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
-        {
-            Piece piece = game.getBoard().getSelected().top();
-            game.getBoard().getSelected().pop();
-            piece.resetValidMoves();
-            piece.calculate_valid_moves();
-
-
-
-            vector <pair<int,int>> valids = piece.getValidMoves();
-            vector <pair<int,int>> scores = piece.getScoringMoves();
-            pair<int,int> i = make_pair(xpos,ypos);
-
-            //cout<<"reached 1"<<endl;
-
-            if(piece.getXindex()==xpos && piece.getYindex()==ypos)
+            if (find(valids.begin(), valids.end(), i) != valids.end())
             {
+                game.getBoard().getSelected().pop();
                 game.getBoard().getPiece(piece.getID()).setSelected(false);
+                game.getBoard().movePiece(xpos,ypos,piece.getID());
+                position[ypos][xpos] = piece.getID();
+                position[piece.getYindex()][piece.getXindex()] = -1;
+
+                game.getBoard().changeTurn();
+
+                //cout<<"moved to "<<xpos<<" "<<ypos<<endl;
             }
+            else
+                return;
+
+
+        }
+        else if(position[ypos][xpos]!=-1 && !game.getBoard().getSelected().empty())
+        {
+
+            if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
+            {
+                Piece piece = game.getBoard().getSelected().top();
+                game.getBoard().getSelected().pop();
+                piece.resetValidMoves();
+                piece.calculate_valid_moves();
+
+
+
+                vector <pair<int,int>> valids = piece.getValidMoves();
+                vector <pair<int,int>> scores = piece.getScoringMoves();
+                pair<int,int> i = make_pair(xpos,ypos);
+
+                //cout<<"reached 1"<<endl;
+
+                if(piece.getXindex()==xpos && piece.getYindex()==ypos)
+                {
+                    game.getBoard().getPiece(piece.getID()).setSelected(false);
+                }
 //            else if(find(scores.begin(), scores.end(), i) != scores.end())
 //            {
 //
@@ -267,94 +343,95 @@ void calculate_index(GLfloat x, GLfloat y)
 //
 //
 //            }
-            else
-            {
-                game.getBoard().getPiece(piece.getID()).setSelected(false);
-                game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
-                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
-                game.getBoard().getSelected().push(piece2);
-            }
-        }
-
-        else if((!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
-        {
-            Piece piece = game.getBoard().getSelected().top();
-            game.getBoard().getSelected().pop();
-            piece.resetValidMoves();
-            piece.calculate_valid_moves();
-
-
-
-            vector <pair<int,int>> valids = piece.getValidMoves();
-            vector <pair<int,int>> scores = piece.getScoringMoves();
-            pair<int,int> i = make_pair(xpos,ypos);
-
-            if(find(scores.begin(), scores.end(), i) != scores.end())
-            {
-
-                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
-                piece2.setCaught(true);
-                if(piece2.isComputer())
+                else
                 {
-                    game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
-                    game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
-                    p1_caught++;
+                    game.getBoard().getPiece(piece.getID()).setSelected(false);
+                    game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
+                    Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                    game.getBoard().getSelected().push(piece2);
+                }
+            }
+
+            else if((!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
+            {
+                Piece piece = game.getBoard().getSelected().top();
+                game.getBoard().getSelected().pop();
+                piece.resetValidMoves();
+                piece.calculate_valid_moves();
+
+
+
+                vector <pair<int,int>> valids = piece.getValidMoves();
+                vector <pair<int,int>> scores = piece.getScoringMoves();
+                pair<int,int> i = make_pair(xpos,ypos);
+
+                if(find(scores.begin(), scores.end(), i) != scores.end())
+                {
+
+                    Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                    piece2.setCaught(true);
+                    if(piece2.isComputer())
+                    {
+                        game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
+                        game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
+                        p1_caught++;
+                    }
+                    else
+                    {
+                        game.getBoard().getPlayer(2).setPiecesLeft(game.getBoard().getPlayer(2).getPiecesLeft()-1);
+                        game.getBoard().getPlayer(1).setScore(game.getBoard().getPlayer(1).getScore()+ piece2.getScore());
+                        p2_caught++;
+                    }
+
+                    cout<<endl<<"Player 1 pieces left "<<game.getBoard().getPlayer(1).getPiecesLeft()<<endl;
+                    cout<<endl<<"Player 2 pieces left "<<game.getBoard().getPlayer(2).getPiecesLeft()<<endl;
+
+
+                    cout<<endl<<"Player 1 score "<<game.getBoard().getPlayer(1).getScore()<<endl;
+                    cout<<endl<<"Player 2 score "<<game.getBoard().getPlayer(2).getScore()<<endl;
+
+
+                    //selected.pop();
+                    game.getBoard().getPiece(piece.getID()).setSelected(false);
+                    game.getBoard().movePiece(xpos,ypos,piece.getID());
+                    position[ypos][xpos] = piece.getID();
+                    position[piece.getYindex()][piece.getXindex()] = -1;
+
+                    game.getBoard().changeTurn();
+
+
+                    //cout<<"reached 2"<<endl;
+
+
                 }
                 else
                 {
-                    game.getBoard().getPlayer(2).setPiecesLeft(game.getBoard().getPlayer(2).getPiecesLeft()-1);
-                    game.getBoard().getPlayer(1).setScore(game.getBoard().getPlayer(1).getScore()+ piece2.getScore());
-                    p2_caught++;
-                }
-
-                cout<<endl<<"Player 1 pieces left "<<game.getBoard().getPlayer(1).getPiecesLeft()<<endl;
-                cout<<endl<<"Player 2 pieces left "<<game.getBoard().getPlayer(2).getPiecesLeft()<<endl;
-
-
-                cout<<endl<<"Player 1 score "<<game.getBoard().getPlayer(1).getScore()<<endl;
-                cout<<endl<<"Player 2 score "<<game.getBoard().getPlayer(2).getScore()<<endl;
-
-
-                //selected.pop();
-                game.getBoard().getPiece(piece.getID()).setSelected(false);
-                game.getBoard().movePiece(xpos,ypos,piece.getID());
-                position[ypos][xpos] = piece.getID();
-                position[piece.getYindex()][piece.getXindex()] = -1;
-
-                game.getBoard().changeTurn();
-
-
-                //cout<<"reached 2"<<endl;
-
-
-            }
-            else
-            {
 //                Piece piece = selected.top();
 //                selected.pop();
-                game.getBoard().getPiece(piece.getID()).setSelected(false);
+                    game.getBoard().getPiece(piece.getID()).setSelected(false);
+                }
+
             }
 
+
+
+            //cout<<"selected "<<xpos<<" "<<ypos<<endl;
         }
 
-
-
-        //cout<<"selected "<<xpos<<" "<<ypos<<endl;
-    }
-
-    else if(position[ypos][xpos]!=-1 && game.getBoard().getSelected().empty())
-    {
-        if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
+        else if(position[ypos][xpos]!=-1 && game.getBoard().getSelected().empty())
         {
-            game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
-            Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
-            game.getBoard().getSelected().push(piece2);
+            if((game.getBoard().getPiece(position[ypos][xpos]).isComputer() && game.getBoard().isComputerTurn()) || (!game.getBoard().getPiece(position[ypos][xpos]).isComputer() && !game.getBoard().isComputerTurn()))
+            {
+                game.getBoard().getPiece(position[ypos][xpos]).setSelected(true);
+                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
+                game.getBoard().getSelected().push(piece2);
+
+            }
+
+            game.getBoard().updatePosition();
 
         }
-
-    game.getBoard().updatePosition();
-
-}
+    }
 }
 
 void scsToWcs(float sx,float sy, float wcsv[3] )
@@ -394,7 +471,7 @@ void processMouse(int button, int state, int x, int y)
 
         scsToWcs(clkpt[0].x,clkpt[0].y,wcsClkDn);
         calculate_index(wcsClkDn[0],wcsClkDn[1]);
-        //cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl;
+        cout<<"\nD: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkDn[0]<<" "<<wcsClkDn[1]<<" "<<wcsClkDn[2]<<endl;
 
 
     }
@@ -408,7 +485,7 @@ void processMouse(int button, int state, int x, int y)
         }
         float wcs[3];
         scsToWcs(clkpt[1].x,clkpt[1].y,wcsClkUp);
-        //cout<<"\nU: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkUp[0]<<" "<<wcsClkUp[1]<<" "<<wcsClkUp[2];
+        cout<<"\nU: "<<x<<" "<<y<<" "<<z<<" wcs: "<<wcsClkUp[0]<<" "<<wcsClkUp[1]<<" "<<wcsClkUp[2];
 
         clikd=!clikd;
     }
@@ -462,7 +539,7 @@ void myKeyboardFunc( unsigned char key, int x, int y )
 
 
     case '-':
-       Tzval+=1;
+        Tzval+=1;
         break;
 
     case '+':
@@ -478,7 +555,11 @@ void myKeyboardFunc( unsigned char key, int x, int y )
 
 
     case 27:	// Escape key
-        exit(1);
+        //exit(1);
+
+        game.setPause(true);
+        game.setStarted(false);
+        break;
     }
 }
 
@@ -531,9 +612,9 @@ void light()
     glLightfv( GL_LIGHT0, GL_SPECULAR, light_specular);
     glLightfv( GL_LIGHT0, GL_POSITION, light_position);
 
-  /*  GLfloat spot_direction[] = { 0.0, -1.0, 0.0 };
-    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-    glLightf( GL_LIGHT0, GL_SPOT_CUTOFF, 10.0); */
+    /*  GLfloat spot_direction[] = { 0.0, -1.0, 0.0 };
+      glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
+      glLightf( GL_LIGHT0, GL_SPOT_CUTOFF, 10.0); */
 }
 
 
@@ -566,6 +647,8 @@ void display(void)
 
 
 
+
+
     glPushMatrix();
     glRotatef(0+ Tzval,0,1,0);
     glRotatef(Tyval,1,0,0);
@@ -579,8 +662,29 @@ void display(void)
     //drawQueen(1);
     //drawKing(1);
     //game();
-    game.getBoard().draw();
+
+
+
+    //game.getBoard().draw();
+    //game.getBoard().drawMenuCard();
+    //game.getBoard().drawPauseMenuCard();
     //initialize();
+
+
+
+    if(game.isStarted())
+    {
+        game.getBoard().draw();
+    }
+    else if(game.isPaused())
+    {
+        game.getBoard().drawPauseMenuCard();
+    }
+    else if(game.isFinished() || (!game.isStarted() && !game.isPaused()))
+    {
+
+        game.getBoard().drawMenuCard();
+    }
 
     glPopMatrix();
 
@@ -605,7 +709,7 @@ int main (int argc, char **argv)
     glutCreateWindow("3D Chess");
 
     glEnable(GL_TEXTURE_2D);
-    for(int i=0;i<sizeof(ID)/sizeof(ID[0]);i++)
+    for(int i=0; i<sizeof(ID)/sizeof(ID[0]); i++)
     {
         string tex= "C:\\Users\\EON\\Documents\\Codes\\Graphics lab\\3D chess\\textures\\" + to_string(ID[i]) + ".bmp";
         LoadTexture(tex.c_str(),ID[i]);

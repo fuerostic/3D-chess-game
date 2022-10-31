@@ -160,13 +160,12 @@ public:
         this->scores.clear();
     }
 
-
     void calculate_valid_moves()
     {
         int tempx;
         int tempy;
 
-        if((this->ID>=8 && this->ID<16) || (this->ID>=16 && this->ID<24))
+        if((this->ID>=8 && this->ID<16) || (this->ID>=16 && this->ID<24) && !this->reach_end)
         {
             for(int i =0; i<3; i++)
             {
@@ -342,7 +341,7 @@ public:
 
             }
         }
-        else if(this->ID==3 || this->ID==27)
+        else if((this->ID==3 || this->ID==27) || (this->ID>=8 && this->ID<16) || ((this->ID>=16 && this->ID<24) && this->reach_end))
         {
 
             for(int i =0; i<8; i++)
@@ -437,6 +436,15 @@ public:
     {
         this->reach_end=true;
         this->score =9;
+
+//        if(this->white)
+//        {
+//            this->ID=3;
+//        }
+//        else
+//        {
+//            this->ID=27;
+//        }
     }
     int getID()
     {

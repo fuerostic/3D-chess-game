@@ -24,6 +24,7 @@ private:
     Player player1 =  Player(1,true,true);
     Player player2 =  Player(2,false,false);
     bool pause ;
+    bool started;
     bool finished ;
     bool computerWon;
 
@@ -34,6 +35,7 @@ public:
     Game()
     {
         this->pause = false;
+        this->started= false;
         this->finished =false;
         this->computerWon = false;
 
@@ -93,8 +95,12 @@ public:
         this->finished = stat;
     }
 
-    bool isFinished(bool stat)
+    bool isFinished()
     {
+        if(this->board.isGameOver())
+        {
+            this->finished= true;
+        }
         return this->finished;
     }
 
@@ -105,7 +111,16 @@ public:
 
     bool isComputerWon()
     {
-        return this->computerWon;
+        return this->board.isComputerWon();
+    }
+
+    void setStarted(bool stat)
+    {
+        this->started = stat;
+    }
+    bool isStarted()
+    {
+        return this->started;
     }
 
 
