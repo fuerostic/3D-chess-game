@@ -32,7 +32,7 @@ GLfloat x=0,y=0,z=0,roll=0,pitch=0, yaw=0,eyex= 0,eyey=10,eyez=7,dx=0,dy=0,dz=0,
 //GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 //GLfloat mat_shininess[] = {60};
 
-GLuint ID[]={1,2,3,4,5,6};
+GLuint ID[]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
 
 int p1_caught=0;
 int p2_caught=0;

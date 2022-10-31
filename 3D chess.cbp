@@ -44,7 +44,17 @@
 		</Linker>
 		<Unit filename="BmpLoader.cpp" />
 		<Unit filename="BmpLoader.h" />
+		<Unit filename="include/Board.h" />
+		<Unit filename="include/Game.h" />
+		<Unit filename="include/Piece.h" />
+		<Unit filename="include/Player.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Board.cpp" />
+		<Unit filename="src/Game.cpp" />
+		<Unit filename="src/Piece.cpp" />
+		<Unit filename="src/Player.cpp" />
+		<Unit filename="utils.cpp" />
+		<Unit filename="utils.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

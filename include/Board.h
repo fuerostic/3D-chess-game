@@ -19,12 +19,14 @@ class Board;
 extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int depth,bool isComputerMax,int alpha,int beta);
 
 
+
 class Board
 {
 private:
     bool white;
     bool gameOver;
     bool computerTurn;
+    int num[10]={10,11,12,13,14,15,16,17,18,19};
     stack<Piece>selected;
     int pos[8][8];
     Player player1 =  Player(1,true,true);
@@ -531,7 +533,7 @@ public:
 //        if()
         if(computerTurn)
         {
-            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),5,true,-INFINITE,INFINITE);
+            pair<pair<pair<int,int>,pair<int,int>>,int>  best_move = minimax(getSelf(),6,true,-INFINITE,INFINITE);
 
             cout<<best_move.first.second.first<<" " <<best_move.first.second.second<<" ID="<<position[best_move.first.second.second][best_move.first.second.first]<< " " <<best_move.first.first.first<< " " <<best_move.first.first.second <<endl;
 
@@ -551,6 +553,17 @@ public:
             this->computerTurn = !this->computerTurn;
         }
 
+//        if(!computerTurn)
+//        {
+//            if(this->num==5)
+//            {
+//                this->num = 4;
+//            }
+//            else
+//            {
+//                this->num = 5;
+//            }
+//        }
 
 
 
@@ -584,6 +597,144 @@ public:
         glDisable(GL_TEXTURE_2D);
     }
 
+    void drawScoreCard()
+    {
+        int ai_score[3]= {0,0,0};
+        int human_score[3]= {0,0,0};
+
+        cout<<this->getPlayer(1).getScore()<<endl;
+        cout<<this->getPlayer(3).getScore()<<endl;
+
+        int num1=this->getPlayer(1).getScore();
+        int num2= this->getPlayer(2).getScore();
+
+        int counter=2;
+        while(num1!=0)
+        {
+            ai_score[counter] = num1%10;
+            num1/=10;
+            counter--;
+        }
+
+        counter=2;
+        while(num2!=0)
+        {
+            human_score[counter] = num2%10;
+            num2/=10;
+            counter--;
+        }
+
+
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,6);
+        glTranslatef(-8,6.5,-7);
+        glRotatef(40,1,0,0);
+        glScalef(16,.2,5);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,9);
+        glTranslatef(-5,6.1,-6);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,8);
+        glTranslatef(4,6.1,-6);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        //glPushMatrix();
+
+        //human score show
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[human_score[0]]);
+        glTranslatef(3,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[human_score[1]]);
+        glTranslatef(4,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[human_score[2]]);
+        glTranslatef(5,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+        //glPopMatrix();
+
+        //AI score show
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[ai_score[0]]);
+        glTranslatef(-6,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[ai_score[1]]);
+        glTranslatef(-5,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num[ai_score[2]]);
+        glTranslatef(-4,5,-5);
+        glRotatef(40,1,0,0);
+        glScalef(1,.2,1);
+        drawCube(1);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+
+
+
+    }
 
 
 
@@ -657,6 +808,11 @@ public:
             //cout<<endl;
         }
 
+
+
+        this->drawScoreCard();
+
+
         glPopMatrix();
     }
 
@@ -703,13 +859,14 @@ public:
         if(position[to.first][to.second]!=-1)
         {
             Piece piece2 = this->getPiece(position[to.first][to.second]);
-            if(position[to.second][to.first]<16)
-            {
-                this->player2.setScore(this->player2.getScore()+piece2.getScore() );
-                this->player2.setScoredPiecesNumber(this->player2.getScoredPiecesNumber()+1);
-                this->player1.setPiecesLeft(this->player1.getPiecesLeft()-1);
-            }
-            else
+//            if(position[to.second][to.first]<16)
+//            {
+//                this->player2.setScore(this->player2.getScore()+piece2.getScore() );
+//                this->player2.setScoredPiecesNumber(this->player2.getScoredPiecesNumber()+1);
+//                this->player1.setPiecesLeft(this->player1.getPiecesLeft()-1);
+//            }
+            //else
+            if(position[to.second][to.first]>=16)
             {
                 this->player1.setScore(this->player1.getScore()+piece2.getScore() );
                 this->player1.setScoredPiecesNumber(this->player1.getScoredPiecesNumber()+1);

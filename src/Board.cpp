@@ -46,8 +46,8 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
         cout<<"moves count:"<<moves.size()<<endl;
 
         pair< pair<int,int>,pair<int,int> > best_move = moves[r];
-        int max_eval = -INFINITE;
-//        int current_eval = -INFINITE;
+        //int max_eval = -INFINITE;
+        int current_eval = -INFINITE;
 
         for(pair< pair<int,int>,pair<int,int> > m:moves)
         {
@@ -57,47 +57,47 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
 
             pair<pair<pair<int,int>,pair<int,int>>,int>  out = minimax(board,depth-1,false,alpha,beta);
 
-            int current_eval = out.second;
-//
-//            current_eval = max(out.second,current_eval);
+            //int current_eval = out.second;
+
+            current_eval = max(out.second,current_eval);
 
             board = temp_board;
 
-//            if (current_eval>=beta)
-//            {
-//                break;
-//            }
-//
-//            if(current_eval>=alpha)
-//            {
-//                alpha = max(alpha,current_eval);
-//                best_move = m;
-//            }
-
-
-
-            if (current_eval>max_eval)
-            {
-                max_eval = current_eval;
-                best_move = m;
-            }
-
-            alpha = max(alpha,current_eval);
-
-            if (beta<=alpha)
+            if (current_eval>=beta)
             {
                 break;
             }
 
+            if(current_eval>alpha)
+            {
+                alpha = max(alpha,current_eval);
+                best_move = m;
+            }
+
+
+
+//            if (current_eval>max_eval)
+//            {
+//                max_eval = current_eval;
+//                best_move = m;
+//            }
+//
+//            alpha = max(alpha,current_eval);
+//
+//            if (beta<=alpha)
+//            {
+//                break;
+//            }
+
         }
 
-        return make_pair(best_move,max_eval);
-//        return make_pair(best_move,current_eval);
+        //return make_pair(best_move,max_eval);
+        return make_pair(best_move,current_eval);
 
     }
     else
     {
-        int min_eval = INFINITE;
+        //int min_eval = INFINITE;
 
         vector<pair< pair<int,int>,pair<int,int> >> moves =calculate_all_valid_moves(board,isComputerMax);
 
@@ -109,7 +109,7 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
         pair< pair<int,int>,pair<int,int> > best_move = moves[r];
 
 
-//        int current_eval = INFINITE;
+        int current_eval = INFINITE;
 
         for(pair< pair<int,int>,pair<int,int> > m:moves)
         {
@@ -119,40 +119,37 @@ extern pair<pair<pair<int,int>,pair<int,int>>,int>  minimax(Board board, int dep
 
             pair<pair<pair<int,int>,pair<int,int>>,int>  out = minimax(board,depth-1,true,alpha,beta);
 
-            int current_eval = out.second;
-//
-//            current_eval = min(out.second,current_eval);
+            current_eval = min(out.second,current_eval);
 
             board = temp_board;
 
-//            if (current_eval<=alpha)
-//            {
-//                break;
-//            }
-//
-//            if(current_eval<beta)
-//            {
-//                beta= min(beta,current_eval);
-//                best_move = m;
-//            }
-
-            if (current_eval<min_eval)
-            {
-                min_eval = current_eval;
-                best_move = m;
-            }
-
-            beta = min(beta,current_eval);
-
-            if(beta<=alpha)
+            if (current_eval<=alpha)
             {
                 break;
             }
 
+            if(current_eval<beta)
+            {
+                beta= min(beta,current_eval);
+                best_move = m;
+            }
+
+//            if (current_eval<min_eval)
+//            {
+//                min_eval = current_eval;
+//                best_move = m;
+//            }
+//
+//            beta = min(beta,current_eval);
+//
+//            if(beta<=alpha)
+//            {
+//                break;
+//            }
+
         }
 
-        //return make_pair(best_move,current_eval);
-        return make_pair(best_move,min_eval);
+        return make_pair(best_move,current_eval);
     }
 
 
