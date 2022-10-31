@@ -32,7 +32,7 @@ GLfloat x=0,y=0,z=0,roll=0,pitch=0, yaw=0,eyex= 0,eyey=10,eyez=7,dx=0,dy=0,dz=0,
 //GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 //GLfloat mat_shininess[] = {60};
 
-GLuint ID[]= {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26};
+GLuint ID[]= {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29};
 
 int p1_caught=0;
 int p2_caught=0;
@@ -132,7 +132,7 @@ void calculate_index(GLfloat x, GLfloat y)
     cout<<"here "<<endl;;
 
 
-    if(!game.isStarted() && !game.isPaused())
+    if(!game.isStarted() && !game.isPaused() && game.isFinished())
     {
 
         cout<<"here 1"<<endl;
@@ -144,6 +144,7 @@ void calculate_index(GLfloat x, GLfloat y)
             cout<<"here 2"<<endl;
             if(y<=y_cords[0] && y>y_cords[1])
             {
+
                 game.setStarted(true);
                 game.setPause(false);
                 game.setFinished(false);
@@ -163,6 +164,7 @@ void calculate_index(GLfloat x, GLfloat y)
                 game.setStarted(false);
                 game.setPause(false);
                 game.setFinished(false);
+                //game.resetGame();
 
                 cout<<"exit"<<endl;
 
@@ -177,26 +179,28 @@ void calculate_index(GLfloat x, GLfloat y)
     {
         cout<<"here 3"<<endl;
 
-            if(y<=y_cords[0] && y>y_cords[1])
-            {
-                game.setStarted(true);
-                game.setPause(false);
-                game.setFinished(false);
-            }
-            else if(y<=y_cords[2] && y>y_cords[3])
-            {
-                game.setStarted(false);
-                game.setPause(false);
-                game.setFinished(true);
-            }
-            else if(y<=y_cords[4] && y>y_cords[5])
-            {
-                game.setStarted(false);
-                game.setPause(false);
-                game.setFinished(false);
+        if(y<=y_cords[0] && y>y_cords[1])
+        {
+            game.setStarted(true);
+            game.setPause(false);
+            game.setFinished(false);
+        }
+        else if(y<=y_cords[2] && y>y_cords[3])
+        {
+            game.setStarted(false);
+            game.setPause(false);
+            game.setFinished(true);
+            game.resetGame();
 
-                exit(1);
-            }
+        }
+        else if(y<=y_cords[4] && y>y_cords[5])
+        {
+            game.setStarted(false);
+            game.setPause(false);
+            game.setFinished(false);
+            game.resetGame();
+            exit(1);
+        }
     }
 
     else if(game.isStarted())
@@ -304,45 +308,7 @@ void calculate_index(GLfloat x, GLfloat y)
                 {
                     game.getBoard().getPiece(piece.getID()).setSelected(false);
                 }
-//            else if(find(scores.begin(), scores.end(), i) != scores.end())
-//            {
-//
-//                Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
-//                piece2.setCaught(true);
-//                if(piece2.isComputer())
-//                {
-//                    game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
-//                    game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
-//                    p1_caught++;
-//                }
-//                else
-//                {
-//                    game.getBoard().getPlayer(2).setPiecesLeft(game.getBoard().getPlayer(2).getPiecesLeft()-1);
-//                    game.getBoard().getPlayer(1).setScore(game.getBoard().getPlayer(1).getScore()+ piece2.getScore());
-//                    p2_caught++;
-//                }
-//
-//                cout<<endl<<"Player 1 pieces left "<<game.getBoard().getPlayer(1).getPiecesLeft()<<endl;
-//                cout<<endl<<"Player 2 pieces left "<<game.getBoard().getPlayer(2).getPiecesLeft()<<endl;
-//
-//
-//                cout<<endl<<"Player 1 score "<<game.getBoard().getPlayer(1).getScore()<<endl;
-//                cout<<endl<<"Player 2 score "<<game.getBoard().getPlayer(2).getScore()<<endl;
-//
-//
-//                //selected.pop();
-//                game.getBoard().getPiece(piece.getID()).setSelected(false);
-//                game.getBoard().movePiece(xpos,ypos,piece.getID());
-//                position[ypos][xpos] = piece.getID();
-//                position[piece.getYindex()][piece.getXindex()] = -1;
-//
-//                game.changeTurn();
-//
-//
-//                //cout<<"reached 2"<<endl;
-//
-//
-//            }
+
                 else
                 {
                     game.getBoard().getPiece(piece.getID()).setSelected(false);
@@ -370,10 +336,32 @@ void calculate_index(GLfloat x, GLfloat y)
 
                     Piece piece2 = game.getBoard().getPiece(position[ypos][xpos]);
                     piece2.setCaught(true);
+                    game.getBoard().getPiece(piece2.getID()).setCaught(true);
+
+                    if (piece2.getID()==4)
+                    {
+                        game.getBoard().setGameOver(true);
+                        game.getBoard().setComputerWon(false);
+                        game.setFinished(true);
+                        game.setStarted(false);
+                        game.setPause(true);
+                        cout<<"gameoover"<<endl;
+                    }
+                    else if(piece2.getID()==28)
+                    {
+                        game.getBoard().setGameOver(true);
+                        game.getBoard().setComputerWon(true);
+                        game.setFinished(true);
+                        game.setStarted(false);
+                        game.setPause(true);
+                        cout<<"gameoover"<<endl;
+                    }
+
                     if(piece2.isComputer())
                     {
                         game.getBoard().getPlayer(1).setPiecesLeft(game.getBoard().getPlayer(1).getPiecesLeft()-1);
                         game.getBoard().getPlayer(2).setScore(game.getBoard().getPlayer(2).getScore()+ piece2.getScore());
+
                         p1_caught++;
                     }
                     else
@@ -431,6 +419,9 @@ void calculate_index(GLfloat x, GLfloat y)
             game.getBoard().updatePosition();
 
         }
+
+
+        game.getBoard().updatePosition();
     }
 }
 
@@ -556,9 +547,16 @@ void myKeyboardFunc( unsigned char key, int x, int y )
 
     case 27:	// Escape key
         //exit(1);
+        if(game.isStarted())
+        {
+            game.setPause(true);
+            game.setStarted(false);
+        }
+        else
+        {
+            exit(1);
+        }
 
-        game.setPause(true);
-        game.setStarted(false);
         break;
     }
 }
@@ -668,6 +666,7 @@ void display(void)
     //game.getBoard().draw();
     //game.getBoard().drawMenuCard();
     //game.getBoard().drawPauseMenuCard();
+    //game.getBoard().drawWinnerCard(27);
     //initialize();
 
 
@@ -676,9 +675,20 @@ void display(void)
     {
         game.getBoard().draw();
     }
-    else if(game.isPaused())
+    else if(game.isPaused() && !game.isFinished())
     {
         game.getBoard().drawPauseMenuCard();
+    }
+    else if(game.isFinished() && game.isPaused())
+    {
+        if(game.isComputerWon())
+        {
+            game.getBoard().drawWinnerCard(27);
+        }
+        else
+        {
+            game.getBoard().drawWinnerCard(28);
+        }
     }
     else if(game.isFinished() || (!game.isStarted() && !game.isPaused()))
     {
@@ -731,6 +741,23 @@ int main (int argc, char **argv)
     //glutFullScreen();
     glutDisplayFunc(display);
     glutIdleFunc(animate);
+
+
+    /* Maximize window using Windows API */
+
+    HWND win_handle = FindWindowW(0, L"3D Chess");
+    if (!win_handle)
+    {
+        printf("!!! Failed FindWindow\n");
+        return -1;
+    }
+
+    SetWindowLong(win_handle, GWL_STYLE, (GetWindowLong(win_handle, GWL_STYLE) | WS_MAXIMIZE));
+    ShowWindowAsync(win_handle, SW_SHOWMAXIMIZED);
+
+    /* Activate GLUT main loop */
+
+
     glutMainLoop();
 
     return 0;

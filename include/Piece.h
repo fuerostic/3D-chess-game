@@ -190,7 +190,7 @@ public:
                     {
                         this->scoring_moves.push_back(make_pair(tempx,tempy));
                         this->scores.push_back(make_pair(make_pair(tempx,tempy),score_by_id[position[tempy][tempx]]));
-                        break;
+
                     }
                     else if(position[tempy][tempx]>=16 && this->ID<16 && i!=0)
                     {

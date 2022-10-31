@@ -200,14 +200,16 @@ public:
         {
             this->gameOver=true;
             this->computerWon = false;
+            cout<<"gameover"<<endl ;
         }
         else if(this->getPiece(28).getCaught()==true || this->getPlayer(2).getPiecesLeft()==0)
         {
             this->gameOver=true;
             this->computerWon = true;
+            cout<<"gameover"<<endl ;
         }
 
-        //cout<<"gameover"<<endl ;
+
         return this->gameOver;
     }
 
@@ -575,8 +577,15 @@ public:
 
     }
 
+    void setGameOver(bool stat)
+    {
+        this->gameOver = stat;
+    }
 
-
+    void setComputerWon(bool stat)
+    {
+        this->computerWon = stat;
+    }
 
 
     bool isComputerTurn()
@@ -725,6 +734,76 @@ public:
         glPopMatrix();
 
         glDisable(GL_TEXTURE_2D);
+
+    }
+
+    void drawWinnerCard(int num)
+    {
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,20);
+        glTranslatef(-5,5,-3);
+        glRotatef(35,1,0,0);
+        glScalef(10,1,10);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //title
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,21);
+        glTranslatef(-2,4.8,-2);
+        glRotatef(35,1,0,0);
+        glScalef(4,1,4);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+        //buttons : Resume
+
+        glEnable(GL_TEXTURE_2D);
+
+        glPushMatrix();
+        glBindTexture(GL_TEXTURE_2D,num);
+        glTranslatef(-1.5,1.5,2.5);
+        glRotatef(33,1,0,0);
+        glScalef(3,1,2);
+        drawCube(1);
+        glPopMatrix();
+
+        glDisable(GL_TEXTURE_2D);
+
+//        //button Main menu
+//
+//        glEnable(GL_TEXTURE_2D);
+//        glPushMatrix();
+//        glBindTexture(GL_TEXTURE_2D,26);
+//        glTranslatef(-1.5,1.2,2.5);
+//        glRotatef(33,1,0,0);
+//        glScalef(3,1,1);
+//        drawCube(1);
+//        glPopMatrix();
+//
+//        glDisable(GL_TEXTURE_2D);
+//
+//        //button exit
+//
+//        glEnable(GL_TEXTURE_2D);
+//        glPushMatrix();
+//        glBindTexture(GL_TEXTURE_2D,23);
+//        glTranslatef(-1.5,.5,3.5);
+//        glRotatef(33,1,0,0);
+//        glScalef(3,1,1);
+//        drawCube(1);
+//        glPopMatrix();
+//
+//        glDisable(GL_TEXTURE_2D);
 
     }
 
@@ -1023,6 +1102,15 @@ public:
             }
 
             this->getPiece(position[to.first][to.second]).setCaught(true);
+
+            if(position[to.first][to.second]==28)
+            {
+                this->gameOver = true;
+                this->computerWon = true;
+
+                cout<<"gameoover"<<endl;
+
+            }
         }
 
         GLfloat movx, movy;

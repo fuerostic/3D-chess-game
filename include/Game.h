@@ -36,10 +36,21 @@ public:
     {
         this->pause = false;
         this->started= false;
-        this->finished =false;
+        this->finished =true;
         this->computerWon = false;
 
     }
+
+
+
+    void resetGame()
+    {
+        this->getBoard().~Board();
+        this->player1.~Player();
+        this->player2.~Player();
+        Game();
+    }
+
 
 //    Board move_virtual_piece(int pos[][8],Piece piece,int x, int y,Board board)
 //    {
